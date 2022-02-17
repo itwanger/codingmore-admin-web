@@ -17,9 +17,8 @@
         </div>
       </el-form>
     </el-card>
-    <el-dialog title="公众号二维码" :visible.sync="addTasteDialog.show" width="40%"
-        :show-close="false" :center="true">
-       <div style="text-align: center">
+    <el-dialog title="公众号二维码" :visible.sync="addTasteDialog.show" width="40%" :show-close="false" :center="true">
+      <div style="text-align: center">
         <span class="font-title-large">扫描下方二维码关注
           <span class="color-main font-extra-large">沉默王二</span>
           公众号回复
@@ -28,7 +27,7 @@
         </span>
         <br>
         <el-image style="width: 160px; height: 160px" :src="itwangerQrcodeUrl"></el-image>
-       </div>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addTasteDialog.show = false">确定</el-button>
       </div>

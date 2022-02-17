@@ -19,15 +19,21 @@ export default new Vuex.Store({
   },
   actions: {
     // 调用后端服务接口，获取当前用户信息并存入vuex
-    refleshUserInfo({commit}) {
+    refleshUserInfo({
+      commit
+    }) {
       GetLoginUserInfo().then(res => {
         console.log('获取登录用户信息成功', res)
         commit('SET_USER_INFO', res)
+      }).catch(rej => {
+        console.log('与服务器通信出现异常，response对象记录', rej)
       })
     },
 
     // 用户退出登陆时候，移除用户信息方法
-    removeUserInfo({commit}) {
+    removeUserInfo({
+      commit
+    }) {
       commit('SET_USER_INFO', null)
     }
   }

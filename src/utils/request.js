@@ -96,16 +96,15 @@ httpRequest.interceptors.response.use(
         removeToken() // 删除本地缓存
         // 跳转到登录页面
         router.push('/login')
+      } else {
+        Message({
+          message,
+          type: 'error',
+          duration: 3 * 1000,
+          showClose: true
+        })
+        return Promise.reject(message)
       }
-
-      Message({
-        message,
-        type: 'error',
-        duration: 3 * 1000,
-        showClose: true
-      })
-
-      return Promise.reject(message)
     }
   },
   error => {
@@ -118,7 +117,7 @@ httpRequest.interceptors.response.use(
     // 当用户登录过期，直接跳转登录页面
     if (error.response.status === 401) {
       removeToken()
-      window.location.href = '/login'
+      router.push('/login')
     }
 
     // 如果用户没定义异常处理，弹出统一友好提示

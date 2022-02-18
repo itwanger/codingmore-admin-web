@@ -17,19 +17,19 @@
         </div>
       </el-form>
     </el-card>
-    <el-dialog title="公众号二维码" :visible.sync="addTasteDialog.show" width="40%" :show-close="false" :center="true">
-      <div style="text-align: center">
-        <span class="font-title-large">扫描下方二维码关注
-          <span class="color-main font-extra-large">沉默王二</span>
+    <el-dialog title="公众号二维码" :visible="qrDialogVisible" :show-close="false" :center="true">
+      <div class="text-center">
+        <div class="font-title-large">
+          扫描下方二维码关注
+          <span class="color-blue">沉默王二</span>
           公众号回复
-          <span class="color-main font-extra-large">体验</span>
+          <span class="color-blue">体验</span>
           获取体验账号
-        </span>
-        <br>
-        <el-image style="width: 160px; height: 160px" :src="itwangerQrcodeUrl"></el-image>
+        </div>
+        <el-image class="img-qrcode" :src="itwangerQrcodeUrl"></el-image>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addTasteDialog.show = false">确定</el-button>
+        <el-button type="primary" @click="qrDialogVisible = false">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -47,11 +47,10 @@ export default {
         userPass: ''
       },
       // 添加标签对话框可见性
-      addTasteDialog: {
-        show: false
-      },
+      qrDialogVisible: false,
+
       // 公众号二维码 URL
-      itwangerQrcodeUrl: 'https://cdn.jsdelivr.net/gh/itwanger/toBeBetterJavaer/images/gongzhonghao.png'
+      itwangerQrcodeUrl: require('@/assets/wanger-qrcode.jpg')
     }
   },
   methods: {
@@ -69,7 +68,7 @@ export default {
 
     // 获取体验账号方法
     btnTasteClick() {
-      this.addTasteDialog.show = true
+      this.qrDialogVisible = true
     }
   }
 }
@@ -90,11 +89,19 @@ export default {
   background: url(~@/assets/login-bg.jpeg) no-repeat center center;
   background-size: 100% 100%;
 }
-.color-main {
+.color-blue {
   color: #409eff;
 }
+
+/* 二维码上方文字样式 */
 .font-title-large {
   font-size: 18px;
   color: #303133;
+  margin-bottom: 40px;
+}
+/* 二维码样式 */
+.img-qrcode {
+  width: 160px;
+  height: 160px;
 }
 </style>

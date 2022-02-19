@@ -6,10 +6,10 @@
       </div>
       <el-form ref="form" :model="form" label-width="60px">
         <el-form-item label="用户名">
-          <el-input v-model="form.userLogin" maxlength="30"></el-input>
+          <el-input v-model="form.userLogin" maxlength="30" @keydown.native.enter="btnLoginClick"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input type="password" v-model="form.userPass" show-password maxlength="50"></el-input>
+          <el-input type="password" v-model="form.userPass" show-password maxlength="50" @keydown.native.enter="btnLoginClick"></el-input>
         </el-form-item>
         <div class="text-right">
           <el-button type="primary" @click="btnLoginClick">登陆</el-button>

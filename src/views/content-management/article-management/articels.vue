@@ -26,16 +26,16 @@
         </div>
       </div>
       <div class="table-container">
-        <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
+        <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit stripe highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
           <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
           <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-          <el-table-column label="标题" prop="postTitle" show-overflow-tooltip />
+          <el-table-column label="标题" prop="postTitle" min-width="450px" show-overflow-tooltip />
           <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip />
           <el-table-column label="作者" prop="userNiceName" width="100px" align="center" />
           <el-table-column label="发布时间" prop="postDate" width="155px" align="center" />
           <el-table-column label="状态" prop="postStatus" width="80px" :formatter="statusFilter" align="center" />
           <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" />
-          <el-table-column label="操作" align="center" width="180px" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" width="180px" fixed="right">
             <template slot-scope="{row,$index}">
               <el-button type="primary" size="mini" @click="handleUpdate(row)">
                 编辑

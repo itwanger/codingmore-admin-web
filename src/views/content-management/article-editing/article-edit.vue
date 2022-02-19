@@ -1,9 +1,6 @@
 <template>
   <el-row style="margin-top: 75px;">
-    <el-col :span="2">
-      &nbsp;
-    </el-col>
-    <el-col :span="20">
+    <el-col :span="23">
       <el-form ref="dataForm" :rules="rules" :model="editDataModel" label-position="right" label-width="100px">
         <!-- 标题 -->
         <el-form-item label="文章标题" prop="postTitle">
@@ -113,9 +110,6 @@
           </el-popover>
         </div>
       </div>
-    </el-col>
-    <el-col :span="2">
-      &nbsp;
     </el-col>
     <el-dialog title="添加标签" :visible="addTagDialog.show" width="350px" :show-close="false">
       <el-form ref="addTagForm" :model="addTagDialog" label-width="80px">
@@ -421,6 +415,7 @@ export default {
   padding: 0 15px;
   background-color: #030b1e;
   color: #fff;
+  z-index: 1600;
 }
 .logo-title {
   font-size: 20px;

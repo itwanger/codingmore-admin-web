@@ -1,3 +1,3 @@
-import articleEdit from './article-edit.vue'
+import articleEdit from './article-edit-without-columns.vue'
 
 export default articleEdit

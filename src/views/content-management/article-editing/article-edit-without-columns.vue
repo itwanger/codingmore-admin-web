@@ -1,61 +1,57 @@
 <template>
   <el-row style="margin-top: 75px;">
-    <el-col :span="23">
-      <el-form ref="dataForm" :rules="rules" :model="editDataModel" label-position="right" label-width="100px">
+    <el-col :span="24" style="padding-right: 15px;">
+      <el-form ref="dataForm" :rules="rules" :model="editDataModel" label-position="right" label-width="100px" :status-icon="true">
         <!-- 标题 -->
         <el-form-item label="文章标题" prop="postTitle">
           <el-input v-model="editDataModel.postTitle" maxlength="100" placeholder="请输入标题" />
         </el-form-item>
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="标题显示">
-              <el-radio v-model="titleDisplaySettings.textColor" label="green">绿色</el-radio>
-              <el-radio v-model="titleDisplaySettings.textColor" label="blue">蓝色</el-radio>
-              <el-checkbox v-model="titleDisplaySettings.isBold">粗体</el-checkbox>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="标题右侧按钮">
-              <el-switch v-model="titleDisplaySettings.rightButton.show"></el-switch>
-              <el-radio-group v-show="titleDisplaySettings.rightButton.show" style="margin-left:30px;" v-model="titleDisplaySettings.rightButton.bgColor">
-                <el-radio :label="''">黑色背景</el-radio>
-                <el-radio :label="'green'">绿色背景</el-radio>
-                <el-radio :label="'blue'">蓝色背景</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col v-show="titleDisplaySettings.rightButton.show" :span="4">
-            <el-form-item label="按钮文本">
-              <el-input v-model="titleDisplaySettings.rightButton.textContent" maxlength="10" placeholder="请输入标题" />
-            </el-form-item>
-          </el-col>
-          <el-col v-show="titleDisplaySettings.rightButton.show" :span="6">
-            <el-input placeholder="请输入内容" v-model="titleDisplaySettings.rightButton.linkTo" :disabled="titleDisplaySettings.rightButton.linkType == 0" class="input-with-select">
-              <el-select v-model="titleDisplaySettings.rightButton.linkType" style="width:120px;" slot="prepend" :disabled="false" placeholder="请选择">
-                <el-option label="链接本文" value="0"></el-option>
-                <el-option label="外链" value="1"></el-option>
-              </el-select>
-            </el-input>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <!-- 发布时间 -->
-            <el-form-item label="发布时间" prop="postDate">
-              <el-date-picker v-model="editDataModel.postDate" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择发布时间" />
-              <!-- <span>**不填写为保存时间**</span> -->
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <!-- 排序号 -->
-            <el-form-item label="排序号" prop="menuOrder">
-              <el-input v-model="editDataModel.menuOrder" placeholder="请输入排序号" maxlength="10" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+        <!-- 正文 -->
+        <el-form-item label="正文" prop="postContent">
+          <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight" />
+        </el-form-item>
+      </el-form>
+      <div class="top-bar flex-row-ver-center">
+        <div class="logo-title">
+          CodingMore - {{topOperTitlePart}}文章
+        </div>
+        <div>
+          <el-button v-if="editMode === 'm'" type="danger" @click="handleDelete">
+            删除
+          </el-button>
+          <el-button @click="saveData('DRAFT')">
+            保存草稿
+          </el-button>
+          <!-- <el-button type="primary" @click="saveData('PUBLISHED')"> -->
+          <el-button type="primary" @click="pubButtonClick">
+            发布
+          </el-button>
+        </div>
+        <div class="user-area">
+          当前用户：
+          <el-popover trigger="click">
+            <el-button type="primary">修改密码</el-button>
+            <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
+            <el-tag style="cursor:pointer;" slot="reference">
+              {{ currentUserInfo ? currentUserInfo.username: '获取失败' }}
+            </el-tag>
+          </el-popover>
+        </div>
+      </div>
+    </el-col>
 
-          </el-col>
-        </el-row>
+    <!-- 发布弹出对话框 -->
+    <el-dialog title="发布选项" :visible="pubDialogShow" :show-close="false" width="800px">
+      <el-form ref="pubForm" :rules="rules" :model="editDataModel" label-position="right" label-width="100px">
+        <el-form-item label="发布时间" prop="postDate">
+          <el-date-picker v-model="editDataModel.postDate" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择发布时间" />
+          <span>**若不填写则默认为操作时间**</span>
+        </el-form-item>
+        <!-- 排序号 -->
+        <el-form-item label="排序号" prop="menuOrder">
+          <el-input v-model="editDataModel.menuOrder" placeholder="请输入排序号" maxlength="10" style="width:220px;" />
+          <span>**若不填写则默认为0**</span>
+        </el-form-item>
         <!-- 文章标签 -->
         <el-form-item label="标签">
           <!-- 新增按钮 -->
@@ -79,38 +75,14 @@
         <el-form-item label="摘要">
           <el-input v-model="editDataModel.postExcerpt" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="请输入摘要" maxlength="1000" />
         </el-form-item>
-        <!-- 正文 -->
-        <el-form-item label="正文" prop="postContent">
-          <mavon-editor v-model="editDataModel.postContent" ref="md" style="min-height: 800px" />
-        </el-form-item>
       </el-form>
-      <div class="top-bar flex-row-ver-center">
-        <div class="logo-title">
-          CodingMore - 编辑文章
-        </div>
-        <div>
-          <el-button v-if="editMode === 'm'" type="danger" @click="handleDelete">
-            删除
-          </el-button>
-          <el-button @click="saveData('DRAFT')">
-            保存草稿
-          </el-button>
-          <el-button @click="saveData('PUBLISHED')">
-            发布
-          </el-button>
-        </div>
-        <div class="user-area">
-          当前用户：
-          <el-popover trigger="click">
-            <el-button type="primary">修改密码</el-button>
-            <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
-            <el-tag style="cursor:pointer;" slot="reference">
-              {{ currentUserInfo ? currentUserInfo.username: '获取失败' }}
-            </el-tag>
-          </el-popover>
-        </div>
+      <div slot="footer" class="text-right">
+        <el-button @click="pubDialogShow = false">取消</el-button>
+        <el-button type="primary" @click="saveData('PUBLISHED')">确定</el-button>
       </div>
-    </el-col>
+    </el-dialog>
+
+    <!-- 添加标签对话框 -->
     <el-dialog title="添加标签" :visible="addTagDialog.show" width="350px" :show-close="false">
       <el-form ref="addTagForm" :model="addTagDialog" label-width="80px">
         <el-form-item label="名称" prop="text" :rules="tagCheckRule">
@@ -143,10 +115,16 @@ export default {
   computed: {
     currentUserInfo() {
       return this.$store.state.userInfo
+    },
+    getMarkdownHeight() {
+      return (window.innerHeight - 40.5 - 16 * 3 - 75) + 'px'
     }
   },
   data() {
     return {
+      // 页面顶部显示当前操作类型的标题部分
+      topOperTitlePart: '新增',
+
       // 页面用来编辑的数据模型
       editDataModel: {
         postsId: undefined,
@@ -198,7 +176,11 @@ export default {
       // 新增时候的所属栏目id
       columnId: null,
       // 编辑模式
-      editMode: null
+      editMode: null,
+
+      pubDialogShow: false,
+
+      mdEditorHeight: '700px'
     }
   },
   methods: {
@@ -342,6 +324,14 @@ export default {
         }
       })
     },
+    // 发布按钮点击方法
+    pubButtonClick() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.pubDialogShow = true
+        }
+      })
+    },
     // 加载编辑的数据
     loadData() {
       getArticleById({ postsId: this.editId }).then(res => {
@@ -391,16 +381,21 @@ export default {
     if (this.$route.query.aid) {
       this.editId = this.$route.query.aid
       this.editMode = 'm'
+      this.topOperTitlePart = '编辑'
       this.loadData()
-    } else if (this.$route.query.cid) {
+    } else {
       // 新增的情况
       this.editMode = 'n'
       this.columnId = this.$route.query.cid
       this.editDataModel.termTaxonomyId = this.columnId
-    } else {
-      // 参数错误的情况
-      this.alertMessageAndCloseWindow('参数错误，将关闭编辑窗口')
     }
+
+    // 使md编辑器高度，随浏览器窗口自动变化
+    let that = this
+    that.mdEditorHeight = (window.innerHeight - 40.5 - 16 * 3 - 75) + 'px'
+    window.addEventListener('resize', () => {
+      that.mdEditorHeight = (window.innerHeight - 40.5 - 16 * 3 - 75) + 'px'
+    })
   }
 }
 </script>

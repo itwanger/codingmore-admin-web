@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import mainFrame from '@/layout'
 import articles from '../views/content-management/article-management'
-import columns from '../views/content-management/column-management'
+// import columns from '../views/content-management/column-management'
 import articleEdit from '../views/content-management/article-editing'
 // import users from '../views/system-management/users-management'
 // import power from '../views/system-management/power-management'
@@ -34,15 +34,15 @@ export const pageRouters = [
         meta: {
           title: '文章管理'
         }
-      },
-      {
-        path: 'columns',
-        name: 'columns-management',
-        component: columns,
-        meta: {
-          title: '栏目管理'
-        }
       }
+      // {
+      //   path: 'columns',
+      //   name: 'columns-management',
+      //   component: columns,
+      //   meta: {
+      //     title: '栏目管理'
+      //   }
+      // }
     ]
   },
   {

@@ -123,6 +123,7 @@ export default {
         postsId: undefined,
         postTitle: '', // 标题
         postContent: '', // 正文
+        htmlContent: '', // html内容，现在转化了，前端直接查询展示就好了
         postExcerpt: '', // 摘要
         postType: 'POST', // 文章类型
         postStatus: 'DRAFT', // 文章状态
@@ -221,8 +222,8 @@ export default {
     },
 
     // md编辑器内容change事件
-    handleEditorChange(onlyText, transToHtml) {
-      console.log('change事件触发', onlyText, transToHtml)
+    handleEditorChange(value, transToHtml) {
+      this.editDataModel.htmlContent = transToHtml
     },
 
     // 标签移动方法

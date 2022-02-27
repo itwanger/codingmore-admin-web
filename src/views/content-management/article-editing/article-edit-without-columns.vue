@@ -33,7 +33,7 @@
 
         <!-- 正文 -->
         <el-form-item prop="postContent">
-          <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight" />
+          <mavon-editor v-model="editDataModel.postContent" ref="md" :html="false" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" :toolbars="toolbars" @imgAdd="handleEditorImgAdd" @change="handleEditorChange" />
         </el-form-item>
       </el-form>
     </el-col>
@@ -89,7 +89,7 @@
 <script>
 import { UserLogout } from '@/api/users'
 import { removeToken } from '@/utils/auth'
-import { getArticleById, deleteArticle, createArticle, updateArticle } from '@/api/articles'
+import { getArticleById, deleteArticle, createArticle, updateArticle, mdEditorUploadImage } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
 import { createUuid } from '@/utils/common'
 import qs from 'qs'
@@ -170,11 +170,61 @@ export default {
       editMode: null,
 
       pubDialogShow: false,
-
-      mdEditorHeight: '700px'
+      // md编辑器高度变量
+      mdEditorHeight: '700px',
+      // md编辑器加载项
+      toolbars: {
+        bold: true, // 粗体
+        italic: true, // 斜体
+        header: true, // 标题
+        underline: true, // 下划线
+        strikethrough: true, // 中划线
+        mark: true, // 标记
+        superscript: false, // 上角标
+        subscript: false, // 下角标
+        quote: true, // 引用
+        ol: true, // 有序列表
+        ul: true, // 无序列表
+        link: true, // 链接
+        imagelink: true, // 图片链接
+        code: true, // code
+        table: true, // 表格
+        fullscreen: false, // 全屏编辑
+        readmodel: true, // 沉浸式阅读
+        htmlcode: false, // 展示html源码
+        help: true, // 帮助
+        /* 1.3.5 */
+        undo: true, // 上一步
+        redo: true, // 下一步
+        trash: true, // 清空
+        save: false, // 保存（触发events中的save事件）
+        /* 1.4.2 */
+        navigation: true, // 导航目录
+        /* 2.1.8 */
+        alignleft: true, // 左对齐
+        aligncenter: true, // 居中
+        alignright: true, // 右对齐
+        /* 2.2.1 */
+        subfield: true, // 单双栏模式
+        preview: true // 预览
+      }
     }
   },
   methods: {
+    // md编辑器上传图片方法
+    handleEditorImgAdd(pos, $file) {
+      var formdata = new FormData()
+      formdata.append('file', $file)
+      mdEditorUploadImage(formdata).then(res => {
+        this.$refs.md.$img2Url(pos, res)
+      })
+    },
+
+    // md编辑器内容change事件
+    handleEditorChange(onlyText, transToHtml) {
+      console.log('change事件触发', onlyText, transToHtml)
+    },
+
     // 标签移动方法
     moveTag(index, way) {
       let targetIndex = 0

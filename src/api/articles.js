@@ -39,3 +39,13 @@ export function updateArticle(data) {
     data
   })
 }
+
+// 对接后台上传接口的方法
+export function mdEditorUploadImage(data) {
+  return request({
+    url: '/ossController/upload',
+    method: 'post',
+    data,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}

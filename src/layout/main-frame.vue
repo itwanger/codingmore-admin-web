@@ -30,8 +30,22 @@
         </div>
         <div class="user-area">
           <el-popover trigger="click">
+
+            <el-button type="primary" @click="writeArticleClick">写文章</el-button>
+
             <el-button type="primary">修改密码</el-button>
+
             <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
+
+            <!-- <div>
+              <el-button type="primary" @click="writeArticleClick">写文章</el-button>
+            </div>
+            <div>
+              <el-button type="primary">修改密码</el-button>
+            </div>
+            <div>
+              <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
+            </div> -->
             <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
             </el-image>
           </el-popover>
@@ -92,6 +106,10 @@ export default {
         // 跳转到登录页面
         this.$router.push('/login')
       })
+    },
+
+    writeArticleClick() {
+      this.$router.push('/content/article-editing')
     }
   },
   mounted() {
@@ -103,12 +121,16 @@ export default {
 
 <style>
 /* 用户头像样式 */
-.user-image{
+.user-image {
   width: 50px;
   height: 50px;
   border-radius: 8px;
   cursor: pointer;
   margin-top: 5px;
+}
+
+.custom-nav .el-submenu__title i {
+  color: #fff;
 }
 
 /* 面包屑前面图标容器样式 */

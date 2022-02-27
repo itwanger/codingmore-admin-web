@@ -21,6 +21,18 @@ body {
   height: 100%;
 }
 
+.flex-row{
+  display: flex;
+}
+
+.flex-auto-item {
+  flex-grow: 1;
+}
+
+.flex-fixed-item {
+  flex-shrink: 0;
+}
+
 .flex-row-ver-center{
   display: flex;
   justify-content: left;
@@ -43,6 +55,12 @@ body {
 .clear {
   clear: both;
 }
+
+.per100input{
+  display: inline-block;
+  width: 100%;
+}
+
 /* 一些公用样式结束 */
 .styleof-inlineblock{
   display: inline-block;
@@ -64,3 +82,33 @@ body {
 .el-tooltip__popper {
   max-width: 800px;
 }
+
+/* placeholder样式定义 */
+#app input::input-placeholder {
+  color: #666;
+}
+
+#app input::-webkit-input-placeholder {
+  color: #666;
+}
+
+#app input:-ms-input-placeholder {
+  color: #666;
+}
+
+#app input:-moz-placeholder {
+  color: #666;
+}
+
+#app input::-moz-placeholder {
+  color: #666;
+}
+
+#app input:focus::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0);
+}
+
+#app input:focus::-moz-input-placeholder {
+  color: rgba(0, 0, 0, 0);
+}
+/* placeholder样式定义结束 */

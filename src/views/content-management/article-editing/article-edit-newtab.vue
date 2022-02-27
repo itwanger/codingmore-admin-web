@@ -309,13 +309,8 @@ export default {
           const saveFunc = this.editMode === 'n' ? createArticle : updateArticle
 
           saveFunc(postData).then(() => {
-            this.$notify({
-              title: '成功',
-              message: '保存成功',
-              type: 'success',
-              duration: 2000
-            })
-            this.$router.push('/content/articles')
+            this.refleshMainPageTable()
+            this.alertMessageAndCloseWindow('保存成功，将关闭窗口', 'success')
           })
         }
       })
@@ -363,13 +358,8 @@ export default {
       }).then(() => {
         this.viewLoading = true
         deleteArticle({ postsId: this.editId }).then(() => {
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.$router.push('/content/articles')
+          this.refleshMainPageTable()
+          this.alertMessageAndCloseWindow('删除成功', 'success')
         }).catch((msg) => {
           this.$alert(`删除失败，服务器返回信息：${msg}`, { type: 'failed' })
         })
@@ -393,9 +383,9 @@ export default {
 
     // 使md编辑器高度，随浏览器窗口自动变化
     let that = this
-    that.mdEditorHeight = (window.innerHeight - 55 - 90) + 'px'
+    that.mdEditorHeight = (window.innerHeight - 40.5 - 22) + 'px'
     window.addEventListener('resize', () => {
-      that.mdEditorHeight = (window.innerHeight - 55 - 90) + 'px'
+      that.mdEditorHeight = (window.innerHeight - 40.5 - 22) + 'px'
     })
   }
 }

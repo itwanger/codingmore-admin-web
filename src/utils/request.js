@@ -115,7 +115,7 @@ httpRequest.interceptors.response.use(
     console.log('服务器返回异常信息：', error, error.response)
 
     // 当用户登录过期，直接跳转登录页面
-    if (error.response.status === 401) {
+    if (error.response.status === 401 || error.response.data.code === 401) {
       removeToken()
       router.push('/login')
     }

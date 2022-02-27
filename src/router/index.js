@@ -20,6 +20,7 @@ Vue.use(Router)
 export const pageRouters = [
   {
     path: '/content',
+    redirect: '/content/articles',
     name: 'content-management',
     component: mainFrame,
     icon: 'el-icon-edit-outline',
@@ -35,14 +36,6 @@ export const pageRouters = [
           title: '文章管理'
         }
       }
-      // {
-      //   path: 'columns',
-      //   name: 'columns-management',
-      //   component: columns,
-      //   meta: {
-      //     title: '栏目管理'
-      //   }
-      // }
     ]
   },
   {
@@ -107,10 +100,30 @@ const systemRouters = [
     name: 'login',
     component: pageLogin
   },
+  // {
+  //   path: '/content/article-editing',
+  //   name: 'article-editing',
+  //   component: articleEdit
+  // },
   {
-    path: '/content/article-editing',
-    name: 'article-editing',
-    component: articleEdit
+    path: '/content',
+    redirect: '/content/articles',
+    name: 'content-management-hidden',
+    component: mainFrame,
+    icon: 'el-icon-edit-outline',
+    meta: {
+      title: '内容管理'
+    },
+    children: [
+      {
+        path: 'article-editing',
+        name: 'article-editing',
+        component: articleEdit,
+        meta: {
+          title: '文章编辑'
+        }
+      }
+    ]
   },
   {
     path: '/',

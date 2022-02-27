@@ -2,7 +2,8 @@
   <div class="outer">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <h2>CodingMore后台管理登陆</h2>
+        <!-- <h2>CodingMore后台管理登陆</h2> -->
+        <img :src="logoUrl" width="360" />
       </div>
       <el-form ref="form" :model="form" label-width="60px">
         <el-form-item label="用户名">
@@ -50,7 +51,10 @@ export default {
       qrDialogVisible: false,
 
       // 公众号二维码 URL
-      itwangerQrcodeUrl: require('@/assets/wanger-qrcode.jpg')
+      itwangerQrcodeUrl: require('@/assets/wanger-qrcode.jpg'),
+
+      // logo图片url
+      logoUrl: require('@/assets/logo-main.jpg')
     }
   },
   methods: {

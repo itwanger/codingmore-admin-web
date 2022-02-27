@@ -2,9 +2,9 @@
   <el-container>
     <!-- 左侧菜单区域 -->
     <el-aside width="201px">
-      <div class="logo text-center">
-        CodingMore
-      </div>
+      <!-- <div class="logo text-center">
+        <img src="../assets/logo-main.jpg" />
+      </div> -->
       <el-menu :default-active="$route.path" class="custom-nav" router>
         <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
           <template slot="title">
@@ -29,13 +29,11 @@
           </el-breadcrumb>
         </div>
         <div class="user-area">
-          当前用户：
           <el-popover trigger="click">
             <el-button type="primary">修改密码</el-button>
             <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
-            <el-tag style="cursor:pointer;" slot="reference">
-              {{ currentUserInfo ? currentUserInfo.username: '获取失败' }}
-            </el-tag>
+            <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
+            </el-image>
           </el-popover>
         </div>
       </el-header>
@@ -44,6 +42,9 @@
         <router-view />
       </el-main>
     </el-container>
+    <el-dialog title="修改密码" :visible="modifyPasswordVisible">
+      <el-form v-model="modifyPasswordForm"></el-form>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -65,7 +66,19 @@ export default {
   data() {
     return {
       // 在router中定义的，要显示在左侧导航的路由数组
-      pageRouters
+      pageRouters,
+
+      // 默认头像路径
+      defaultUserImage: require('@/assets/default_user_image.jpg'),
+
+      // 用户修改密码对话框可见性
+      modifyPasswordVisible: false,
+
+      // 修改密码表单
+      modifyPasswordForm: {
+        newPassword: '',
+        oldPassword: ''
+      }
     }
   },
   methods: {
@@ -89,6 +102,15 @@ export default {
 </script>
 
 <style>
+/* 用户头像样式 */
+.user-image{
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
 /* 面包屑前面图标容器样式 */
 .bread-icon {
   margin-right: 10px;
@@ -105,63 +127,69 @@ export default {
 .el-header.flex-row-ver-center .el-breadcrumb__inner.is-link,
 .el-header.flex-row-ver-center .el-breadcrumb__inner,
 .el-header.flex-row-ver-center .el-breadcrumb__inner:hover {
-  color: #fff;
+  color: #333;
 }
 
 /* 设置菜单背景色 */
 .custom-nav.el-menu {
-  background-color: #030b1e;
-  border-right-color: #030b1e;
+  background-color: #304156;
+  border-right-color: #304156;
 }
 
 /* 让菜单文字左对齐样式 */
 .custom-nav .el-menu .el-menu-item {
   padding-left: 52px !important;
-  background-color: #030b1e;
-  color: #fff;
+  background-color: #304156;
+  color: #bfcbd9;
 }
 /* .custom-nav .el-submenu__title:hover{
-  background-color: #030B1E;
+  background-color: #304156;
 } */
 /* 菜单hover效果样式 */
 .custom-nav .el-submenu__title:hover,
 .custom-nav .el-menu .el-menu-item:hover {
-  background-color: #112c6d;
+  background-color: #1f2d3d;
 }
 /* 菜单激活样式 */
 .custom-nav .el-menu .el-menu-item.is-active {
-  background-color: #1890ff !important;
+  background-color: #1f2d3d !important;
+  color: #409eff;
 }
 /* 菜单非叶子节点的样式 */
 .custom-nav .el-submenu__title {
-  color: #fff;
+  color: #bfcbd9;
 }
 
 /* logo样式 */
 .logo {
-  line-height: 60px;
-  font-size: 30px;
+  height: 87px;
+  /*line-height: 60px;
+  font-size: 30px; */
   box-sizing: border-box;
   font-style: italic;
   background-color: #d3dce6;
 }
 
+.logo > img {
+  width: 201px;
+  /* height: 60px; */
+}
+
 /* 这里是官网例子的样式，为了查看效果可以先拿过来使用 */
 .el-header,
 .el-footer {
-  background-color: #030b1e;
+  background-color: #fff;
   color: #333;
-  line-height: 60px;
-  color: #fff;
+  border-bottom: 1px solid #cccccc;
 }
 
 .el-aside {
-  background-color: #030b1e;
-  color: #030b1e;
+  background-color: #304156;
+  color: #304156;
 }
 
 .el-main {
-  background-color: #e9eef3;
+  background-color: #fff;
   color: #333;
 }
 </style>

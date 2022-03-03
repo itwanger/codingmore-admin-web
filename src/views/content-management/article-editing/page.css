@@ -34,32 +34,6 @@
   font-size: 20px;
 }
 
-/* placeholder样式定义 */
-/* .article-edit-form input::input-placeholder {
-  color: #666;
+.title-row{
+  margin-bottom: 8px;
 }
-
-.article-edit-form input::-webkit-input-placeholder {
-  color: #666;
-}
-
-.article-edit-form input:-ms-input-placeholder {
-  color: #666;
-}
-
-.article-edit-form input:-moz-placeholder {
-  color: #666;
-}
-
-.article-edit-form input::-moz-placeholder {
-  color: #666;
-}
-
-.article-edit-form input:focus::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0);
-}
-
-.article-edit-form input:focus::-moz-input-placeholder {
-  color: rgba(0, 0, 0, 0);
-} */
-/* placeholder样式定义结束 */

@@ -23,23 +23,34 @@ export const pageRouters = [
     redirect: '/content/articles',
     name: 'content-management',
     component: mainFrame,
-    icon: 'el-icon-edit-outline',
+    icon: 'el-icon-s-help', // el-icon-s-help
     meta: {
       title: '内容管理'
     },
     children: [
       {
+        path: 'article-editing',
+        name: 'article-editing',
+        icon: 'el-icon-edit-outline',
+        component: articleEdit,
+        meta: {
+          title: '创建文章'
+        }
+      },
+      {
         path: 'articles',
         name: 'article-management',
+        icon: 'el-icon-notebook-2',
         component: articles,
         meta: {
-          title: '文章管理'
+          title: '文章列表'
         }
       }
     ]
   },
   {
     path: '/system',
+    redirect: '/system/site',
     name: 'system-management',
     component: mainFrame,
     icon: 'el-icon-s-operation',
@@ -51,6 +62,7 @@ export const pageRouters = [
         path: 'site',
         name: 'site-configuration',
         component: siteConfig,
+        icon: 'el-icon-s-grid',
         meta: {
           title: '站点配置'
         }
@@ -105,26 +117,6 @@ const systemRouters = [
   //   name: 'article-editing',
   //   component: articleEdit
   // },
-  {
-    path: '/content',
-    redirect: '/content/articles',
-    name: 'content-management-hidden',
-    component: mainFrame,
-    icon: 'el-icon-edit-outline',
-    meta: {
-      title: '内容管理'
-    },
-    children: [
-      {
-        path: 'article-editing',
-        name: 'article-editing',
-        component: articleEdit,
-        meta: {
-          title: '文章编辑'
-        }
-      }
-    ]
-  },
   {
     path: '/',
     name: 'root',

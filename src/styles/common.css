@@ -105,10 +105,10 @@ body {
 }
 
 #app input:focus::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0);
+  color: #666;
 }
 
 #app input:focus::-moz-input-placeholder {
-  color: rgba(0, 0, 0, 0);
+  color: #666;
 }
 /* placeholder样式定义结束 */

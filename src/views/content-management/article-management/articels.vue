@@ -2,30 +2,34 @@
   <div class="app-container">
     <div class="flex-row-ver-center">
       <div class="flex-auto-item">
-        <el-input v-model="tableAbout.listQuery.postTitleKeyword" placeholder="请输入标题进行搜索"></el-input>
+        <el-input v-model="tableAbout.listQuery.postTitleKeyword" placeholder="请输入标题"></el-input>
       </div>
       <div class="flex-fixed-item">
-        <el-select v-model="tableAbout.listQuery.postStatus" placeholder="文章状态">
+        <el-select v-model="tableAbout.listQuery.postStatus" clearable placeholder="文章状态">
           <el-option v-for="item in statusList" :label="item.label" :value="item.value" :key="item.value">{{item.label}}</el-option>
         </el-select>
       </div>
-      <div class="flex-auto-item">
+      <div class="flex-fixed-item">
         <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="search">
           搜索
         </el-button>
-        <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+        <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
           新增
-        </el-button>
+        </el-button> -->
       </div>
     </div>
     <div class="table-container">
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
         <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-        <el-table-column label="标题" prop="postTitle" min-width="450px" show-overflow-tooltip />
-        <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip />
+        <el-table-column label="标题" prop="postTitle" />
+        <!-- <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip /> -->
         <el-table-column label="作者" prop="userNiceName" width="100px" align="center" />
-        <el-table-column label="发布时间" prop="postDate" width="155px" align="center" />
+        <el-table-column label="发布时间" prop="postDate" width="155px" align="center">
+          <template slot-scope="{row}">
+            {{row.postDate.substr(0,16)}}
+            </template>
+        </el-table-column>
         <el-table-column label="状态" prop="postStatus" width="80px" :formatter="statusFilter" align="center">
           <template slot-scope="{row}">
             <el-tag :type="row.postStatus == 'DRAFT' ? 'info': 'success'">
@@ -34,7 +38,7 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" /> -->
-        <el-table-column label="操作" align="center" width="180px" fixed="right">
+        <el-table-column label="操作" align="center" width="180px">
           <template slot-scope="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑
@@ -60,7 +64,7 @@ export default {
   name: 'ArticlesManagement',
   data() {
     return {
-      statusList: [{ value: '', label: '文章状态：全部' }, { value: 'DRAFT', label: '草稿' }, { value: 'PUBLISHED', label: '发布' }], // { value: 'DELETED', label: '删除' },
+      statusList: [{ value: 'DRAFT', label: '草稿' }, { value: 'PUBLISHED', label: '发布' }], // { value: 'DELETED', label: '删除' },
 
       // 文章列表相关属性
       tableAbout: {

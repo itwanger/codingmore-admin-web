@@ -11,7 +11,10 @@
             <i :class="item.icon"></i>
             <span>{{item.meta.title}}</span>
           </template>
-          <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">{{subitem.meta.title}}</el-menu-item>
+          <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
+            <i :class="subitem.icon"></i>
+            <span>{{subitem.meta.title}}</span>
+          </el-menu-item>
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -29,26 +32,16 @@
           </el-breadcrumb>
         </div>
         <div class="user-area">
-          <el-popover trigger="click">
-
-            <el-button type="primary" @click="writeArticleClick">写文章</el-button>
-
-            <el-button type="primary">修改密码</el-button>
-
-            <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
-
-            <!-- <div>
-              <el-button type="primary" @click="writeArticleClick">写文章</el-button>
-            </div>
-            <div>
-              <el-button type="primary">修改密码</el-button>
-            </div>
-            <div>
-              <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
-            </div> -->
-            <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
-            </el-image>
-          </el-popover>
+          <el-dropdown trigger="click" @command="handleCommand">
+            <span>
+              <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
+              </el-image>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>修改密码</el-dropdown-item>
+              <el-dropdown-item divided command="q">退出登陆</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </el-header>
       <!-- 右侧主页面部分 -->
@@ -96,6 +89,12 @@ export default {
     }
   },
   methods: {
+    handleCommand(command) {
+      if (command == 'q') {
+        this.logoutSystemClick()
+      }
+    },
+
     logoutSystemClick() {
       // 调用服务器方法退出登陆
       UserLogout().then(() => {
@@ -160,7 +159,7 @@ export default {
 
 /* 让菜单文字左对齐样式 */
 .custom-nav .el-menu .el-menu-item {
-  padding-left: 52px !important;
+  /* padding-left: 52px !important; */
   background-color: #304156;
   color: #bfcbd9;
 }

@@ -2,7 +2,7 @@
   <el-row>
     <el-col :span="24">
       <el-form class="article-edit-form" ref="dataForm" :rules="rules" :model="editDataModel" label-position="right" label-width="0" :show-message="false" :status-icon="false">
-        <div class="flex-row-ver-center">
+        <div class="flex-row-ver-center title-row">
           <div class="flex-auto-item">
             <!-- 标题 -->
             <el-form-item prop="postTitle">

@@ -152,7 +152,8 @@ export default {
 }
 
 /* 设置菜单背景色 */
-.custom-nav.el-menu {
+.custom-nav.el-menu,
+.custom-nav .el-menu {
   background-color: #304156;
   border-right-color: #304156;
 }

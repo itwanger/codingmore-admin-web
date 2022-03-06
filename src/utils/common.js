@@ -1,3 +1,7 @@
+import {
+  MessageBox
+} from 'element-ui'
+
 /**
  * 创建uuid方法
  */
@@ -42,4 +46,32 @@ export function assignSameProperty(targetObject, otherObject) {
   } else {
     return targetObject || otherObject
   }
+}
+
+/**
+ * 从elementUI表单验证回调参数当中获取错误信息数组的方法
+ * @param {object} formValidErrObject elementUI表单验证失败后回调的第二个参数
+ */
+export function getFormValidErrorMessageArray(formValidErrObject) {
+  const retArr = []
+  Object.keys(formValidErrObject).forEach(key => {
+    formValidErrObject[key].forEach(errObj => {
+      retArr.push(errObj.message)
+    })
+  })
+  return retArr
+}
+
+/**
+ * 在禁用elementUI自带的表单提示的前提下，统一处理表单验证失败的方法
+ * @param {object} formValidErrObject elementUI表单验证失败后回调的第二个参数
+ */
+export function handleFormValidError(formValidErrObject) {
+  let errMsgArr = getFormValidErrorMessageArray(formValidErrObject)
+  MessageBox({
+    dangerouslyUseHTMLString: true,
+    message: errMsgArr.join('<br />'),
+    type: 'error',
+    title: '操作失败'
+  })
 }

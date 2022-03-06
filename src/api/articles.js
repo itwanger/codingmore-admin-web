@@ -49,3 +49,5 @@ export function mdEditorUploadImage(data) {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
+
+export const uploadUrl = process.env.VUE_APP_BASE_API + '/ossController/upload'

@@ -21,14 +21,6 @@
               发布
             </el-button>
           </div>
-          <!-- <div class="user-area flex-fixed-item">
-            <el-popover trigger="click">
-              <el-button type="primary">修改密码</el-button>
-              <el-button type="danger" @click="logoutSystemClick">退出登陆</el-button>
-              <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
-              </el-image>
-            </el-popover>
-          </div> -->
         </div>
 
         <!-- 正文 -->
@@ -49,7 +41,6 @@
           <el-button @click="moveTag(tagSelectedIndex, 't')" type="primary" icon="el-icon-d-arrow-left" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == 0" circle></el-button>
           <!-- 向前调整一位按钮 -->
           <el-button @click="moveTag(tagSelectedIndex, 'f')" type="primary" icon="el-icon-arrow-left" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == 0" circle></el-button>
-          <!-- <el-input v-model="editDataModel.tags" maxlength="100" placeholder="请输入标签，多个标签之间使用逗号分隔" /> -->
 
           <!-- 标签列表 -->
           <el-tag class="article-tag" :type="(tagSelectedIndex == index ? 'warning': '')" :key="tag.key" v-for="(tag, index) in tagArray" effect="light" closable :disable-transitions="false" @click="selectTag(index)" @close="deleteTag(index)">
@@ -63,6 +54,13 @@
         <!-- 摘要 -->
         <el-form-item label="摘要">
           <el-input v-model="editDataModel.postExcerpt" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="请输入摘要" maxlength="100" show-word-limit />
+        </el-form-item>
+        <el-form-item label="封面图">
+          <el-upload class="article-cover" :action="uploadUrl" :headers="{Authorization: getToken()}" :show-file-list="false" :on-success="handleArticleCoverSuccess" :before-upload="beforeArticleCoverUpload">
+            <img v-if="articleCoverUrl" :src="articleCoverUrl" class="article-cover">
+            <i v-else class="el-icon-plus cover-uploader-icon"></i>
+          </el-upload>
+          <div class="red-tip">只能上传jpg/png文件，最佳分辨率为120x80, 且不超过1M</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="text-right">
@@ -88,16 +86,18 @@
 </template>
 <script>
 import { UserLogout } from '@/api/users'
-import { removeToken } from '@/utils/auth'
-import { getArticleById, deleteArticle, createArticle, updateArticle, mdEditorUploadImage } from '@/api/articles'
+import { removeToken, getToken } from '@/utils/auth'
+import { getArticleById, deleteArticle, createArticle, updateArticle, mdEditorUploadImage, uploadUrl } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
-import { createUuid } from '@/utils/common'
+import { createUuid, handleFormValidError } from '@/utils/common'
 import qs from 'qs'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import './page.css'
 import Vue from 'vue'
+import { Notification } from 'element-ui'
 Vue.use(mavonEditor)
+Vue.use(Notification)
 
 export default {
   name: 'articleEdit',
@@ -112,6 +112,9 @@ export default {
   },
   data() {
     return {
+      // 上传接口URL
+      uploadUrl,
+
       // 默认头像路径
       defaultUserImage: require('@/assets/default_user_image.jpg'),
 
@@ -142,17 +145,20 @@ export default {
         postContent: [{ required: true, validator: emptyChecker, message: '文章正文不能为空', trigger: 'none' }]
       },
 
+      articleCoverUrl: '',
+
       // 文章标题相关设置数据
-      titleDisplaySettings: {
-        isBold: false, // 是否粗体
-        textColor: 'green', // 链接文字的颜色，目前支持蓝色和绿色
-        rightButton: { // 右侧按钮设置
-          show: false, // 是否显示右侧按钮
-          bgColor: '', // 按钮背景色：绿色(green)、蓝色(blue)、黑色(默认，没有值就是黑色)
-          textContent: '查看更多', // 按钮上的文字
-          linkType: '0', // 链接类型
-          linkTo: '' // 按钮链接是否链接本文章或者可以设置任意外链，如果不填写，就链接本篇文章
-        }
+      otherSettings: {
+        articleCoverUrl: ''
+        // isBold: false, // 是否粗体
+        // textColor: 'green', // 链接文字的颜色，目前支持蓝色和绿色
+        // rightButton: { // 右侧按钮设置
+        //   show: false, // 是否显示右侧按钮
+        //   bgColor: '', // 按钮背景色：绿色(green)、蓝色(blue)、黑色(默认，没有值就是黑色)
+        //   textContent: '查看更多', // 按钮上的文字
+        //   linkType: '0', // 链接类型
+        //   linkTo: '' // 按钮链接是否链接本文章或者可以设置任意外链，如果不填写，就链接本篇文章
+        // }
       },
 
       // 添加标签对话框可见性
@@ -212,6 +218,23 @@ export default {
     }
   },
   methods: {
+    // 上传文章封面图之前验证的方法
+    beforeArticleCoverUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (!isLt1M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isLt1M
+    },
+    // 上传文章封面图成功后回调函数
+    handleArticleCoverSuccess(res, file) {
+      this.articleCoverUrl = res.result
+      console.log('this.articleCoverUrl=', this.articleCoverUrl)
+    },
+
+    getToken,
+    createUuid,
+
     // md编辑器上传图片方法
     handleEditorImgAdd(pos, $file) {
       var formdata = new FormData()
@@ -344,7 +367,8 @@ export default {
       // 赋值文章状态
       this.editDataModel.postStatus = stateSetting
       // 赋值属性
-      this.editDataModel.attribute = JSON.stringify(this.titleDisplaySettings)
+      this.otherSettings.articleCoverUrl = this.articleCoverUrl
+      this.editDataModel.attribute = JSON.stringify(this.otherSettings)
       // 赋值文章标签
       if (this.tagArray.length > 0) {
         let tempArr = this.tagArray.map(x => x.name)
@@ -352,7 +376,7 @@ export default {
         this.editDataModel.tags = tagsValue
       }
 
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate((valid, errorInfo) => {
         if (valid) {
           this.dialogLoading = true
           const postData = qs.stringify(this.editDataModel)
@@ -368,14 +392,19 @@ export default {
             })
             this.$router.push('/content/articles')
           })
+        } else {
+          handleFormValidError(errorInfo)
         }
       })
     },
     // 发布按钮点击方法
     pubButtonClick() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate((valid, errorInfo) => {
         if (valid) {
           this.pubDialogShow = true
+        } else {
+          // 显示错误信息
+          handleFormValidError(errorInfo)
         }
       })
     },
@@ -385,7 +414,8 @@ export default {
         this.editDataModel = res
         if (this.editDataModel.attribute) {
           // 赋值界面属性对象
-          this.titleDisplaySettings = this.editDataModel.attribute
+          this.otherSettings = this.editDataModel.attribute
+          this.articleCoverUrl = this.otherSettings.articleCoverUrl
         }
         // 赋值界面标签数组对象
         if (this.editDataModel.tagsName) {
@@ -399,10 +429,6 @@ export default {
       // .catch(() => {
       //   this.alertMessageAndCloseWindow('查询编辑文章信息发生异常，请刷新文章列表重试，将关闭编辑窗口')
       // })
-    },
-    // 刷新主页面列表
-    refleshMainPageTable() {
-      window.opener.refleshTable(this.columnId || this.editDataModel.termTaxonomyId)
     },
     // 文章删除方法
     handleDelete() {

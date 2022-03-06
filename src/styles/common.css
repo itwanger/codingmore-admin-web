@@ -61,6 +61,11 @@ body {
   width: 100%;
 }
 
+.red-tip {
+  font-size: 12px;
+  color: #ff0000;
+}
+
 /* 一些公用样式结束 */
 .styleof-inlineblock{
   display: inline-block;

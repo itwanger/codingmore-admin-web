@@ -29,13 +29,14 @@
   margin-bottom: 0;
 }
 
+.article-edit-form .el-form-item.mb-8{
+  margin-bottom: 8px;
+}
+
 .article-edit-form .el-input__inner{
   border: 0;
   font-size: 20px;
-}
-
-.title-row{
-  margin-bottom: 8px;
+  padding-left: 0;
 }
 
 .article-cover{
@@ -57,4 +58,24 @@
 .article-cover .cover-uploader-icon:hover{
   border-color: #409EFF;
   color: #409EFF;
+}
+
+/* 标签容器中的按钮样式 */
+.tags-container .el-button,
+.tags-container .el-button + .el-button{
+  margin-left: 0;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+.tags-selected{
+  display: inline-block;
+}
+.addtag-btn,
+.tags-selected .el-tag{
+  margin-right: 10px;
+}
+
+/* 添加样式让select显示为100%宽度 */
+.el-select.full-row{
+  display: block;
 }

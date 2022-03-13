@@ -5,7 +5,7 @@
         <div class="flex-row-ver-center title-row">
           <div class="flex-auto-item">
             <!-- 标题 -->
-            <el-form-item prop="postTitle">
+            <el-form-item class="mb-8" prop="postTitle">
               <el-input v-model="editDataModel.postTitle" maxlength="100" placeholder="请输入标题..." />
             </el-form-item>
           </div>
@@ -13,43 +13,30 @@
             <el-button v-if="editMode === 'm'" type="danger" @click="handleDelete">
               删除
             </el-button>
-            <el-button @click="saveData('DRAFT')">
+            <el-button v-if="editDataModel.postStatus === 'DRAFT'" @click="saveData('DRAFT')">
               保存草稿
             </el-button>
-            <!-- <el-button type="primary" @click="saveData('PUBLISHED')"> -->
             <el-button type="primary" @click="pubButtonClick">
               发布
             </el-button>
           </div>
         </div>
 
-        <!-- 正文 -->
+        <!-- 正文 :html="false"   -->
         <el-form-item prop="postContent">
-          <mavon-editor v-model="editDataModel.postContent" ref="md" :html="false" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" :toolbars="toolbars" @imgAdd="handleEditorImgAdd" @change="handleEditorChange" />
+          <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" @change="handleEditorChange" @imgAdd="handleEditorImgAdd" :toolbars="toolbars" />
         </el-form-item>
       </el-form>
     </el-col>
-
     <!-- 发布弹出对话框 -->
     <el-dialog title="发布选项" :visible="pubDialogShow" :show-close="false" width="800px">
       <el-form ref="pubForm" :rules="rules" :model="editDataModel" label-position="right" label-width="100px">
         <!-- 文章标签 -->
         <el-form-item label="标签">
-          <!-- 新增按钮 -->
-          <el-button type="primary" icon="el-icon-plus" @click="addTagClick"></el-button>
-          <!-- 调整到最前面按钮 -->
-          <el-button @click="moveTag(tagSelectedIndex, 't')" type="primary" icon="el-icon-d-arrow-left" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == 0" circle></el-button>
-          <!-- 向前调整一位按钮 -->
-          <el-button @click="moveTag(tagSelectedIndex, 'f')" type="primary" icon="el-icon-arrow-left" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == 0" circle></el-button>
-
-          <!-- 标签列表 -->
-          <el-tag class="article-tag" :type="(tagSelectedIndex == index ? 'warning': '')" :key="tag.key" v-for="(tag, index) in tagArray" effect="light" closable :disable-transitions="false" @click="selectTag(index)" @close="deleteTag(index)">
-            {{tag.name}}
-          </el-tag>
-          <!-- 向后调整一个位置按钮 -->
-          <el-button @click="moveTag(tagSelectedIndex, 'b')" style="margin-left:10px;" type="primary" icon="el-icon-arrow-right" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == tagArray.length - 1" circle></el-button>
-          <!-- 调整到最后位置按钮 -->
-          <el-button @click="moveTag(tagSelectedIndex, 'l')" type="primary" icon="el-icon-d-arrow-right" size="mini" :disabled="tagSelectedIndex == -1 || tagSelectedIndex == tagArray.length - 1" circle></el-button>
+          <el-select v-model="selectedTagArray" class="full-row" filterable :multiple-limit="5" multiple placeholder="可输入文字查询">
+            <el-option v-for="item in allTagList" :key="item.postTagId" :label="item.description" :value="item.postTagId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <!-- 摘要 -->
         <el-form-item label="摘要">
@@ -68,26 +55,12 @@
         <el-button type="primary" @click="saveData('PUBLISHED')">确定</el-button>
       </div>
     </el-dialog>
-
-    <!-- 添加标签对话框 -->
-    <el-dialog title="添加标签" :visible="addTagDialog.show" width="350px" :show-close="false">
-      <el-form ref="addTagForm" :model="addTagDialog" label-width="80px">
-        <el-form-item label="名称" prop="text" :rules="tagCheckRule">
-          <el-input v-model="addTagDialog.text" placeholder="请填写标签名称"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer">
-        <el-button type="primary" @click="addTagConfirm">确定并继续</el-button>
-        <el-button type="primary" @click="addTagConfirmAndClose">确定</el-button>
-        <el-button @click="addTagDialog.show = false">关闭</el-button>
-      </div>
-    </el-dialog>
   </el-row>
 </template>
 <script>
 import { UserLogout } from '@/api/users'
 import { removeToken, getToken } from '@/utils/auth'
-import { getArticleById, deleteArticle, createArticle, updateArticle, mdEditorUploadImage, uploadUrl } from '@/api/articles'
+import { getArticleById, deleteArticle, createArticle, updateArticle, getTagList, mdEditorUploadImage, uploadUrl } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
 import { createUuid, handleFormValidError } from '@/utils/common'
 import qs from 'qs'
@@ -95,9 +68,7 @@ import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import './page.css'
 import Vue from 'vue'
-import { Notification } from 'element-ui'
 Vue.use(mavonEditor)
-Vue.use(Notification)
 
 export default {
   name: 'articleEdit',
@@ -105,9 +76,6 @@ export default {
   computed: {
     currentUserInfo() {
       return this.$store.state.userInfo
-    },
-    getMarkdownHeight() {
-      return (window.innerHeight - 40.5 - 16 * 3 - 75) + 'px'
     }
   },
   data() {
@@ -135,9 +103,10 @@ export default {
         tags: '' // 标签
       },
 
-      // 标签数组
-      tagArray: [],
-      tagSelectedIndex: -1,
+      // 所有标签列表
+      allTagList: [],
+      // 已经选择的标签
+      selectedTagArray: [],
 
       // 编辑弹窗校验规则
       rules: {
@@ -161,11 +130,6 @@ export default {
         // }
       },
 
-      // 添加标签对话框可见性
-      addTagDialog: {
-        show: false,
-        text: ''
-      },
       // 标签名称校验规则
       tagCheckRule: [{ required: true, validator: emptyChecker, message: '标签名称不能为空', trigger: 'blur' }],
 
@@ -176,6 +140,7 @@ export default {
       // 编辑模式
       editMode: null,
 
+      // 发布弹窗可见性
       pubDialogShow: false,
       // md编辑器高度变量
       mdEditorHeight: '700px',
@@ -208,9 +173,9 @@ export default {
         /* 1.4.2 */
         navigation: true, // 导航目录
         /* 2.1.8 */
-        alignleft: true, // 左对齐
-        aligncenter: true, // 居中
-        alignright: true, // 右对齐
+        alignleft: false, // 左对齐
+        aligncenter: false, // 居中
+        alignright: false, // 右对齐
         /* 2.2.1 */
         subfield: true, // 单双栏模式
         preview: true // 预览
@@ -218,11 +183,22 @@ export default {
     }
   },
   methods: {
+    // 查询标签列表方法
+    getSystemTagList() {
+      return getTagList({ page: 1, pageSize: 1000 }).then(res => {
+        res.items.forEach((item, i) => {
+          item.oriIndex = i
+          item.selected = false
+        })
+        this.allTagList = res.items
+      })
+    },
+
     // 上传文章封面图之前验证的方法
     beforeArticleCoverUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 1
       if (!isLt1M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('封面图片大小不能超过1MB!')
       }
       return isLt1M
     },
@@ -247,96 +223,6 @@ export default {
     // md编辑器内容change事件
     handleEditorChange(value, transToHtml) {
       this.editDataModel.htmlContent = transToHtml
-    },
-
-    // 标签移动方法
-    moveTag(index, way) {
-      let targetIndex = 0
-      let moved = true
-      let temp = this.tagArray[index]
-      if ((way == 'f' && index != 0) || (way == 'b' && index < this.tagArray.length - 1)) {
-        if (way == 'f') {
-          targetIndex = parseInt(index - 1)
-        } else {
-          targetIndex = parseInt(index + 1)
-        }
-        this.tagArray[index] = this.tagArray[targetIndex]
-        this.tagArray[targetIndex] = temp
-      } else if (way == 't' && index != 0) {
-        this.tagArray.splice(index, 1)
-        this.tagArray.splice(0, 0, temp)
-      } else if (way == 'l' && index < this.tagArray.length - 1) {
-        targetIndex = this.tagArray.length - 1
-        this.tagArray.splice(index, 1)
-        this.tagArray.push(temp)
-      } else {
-        moved = false
-        console.log('不移动分支，targetIndex=', targetIndex, 'index=', index, 'way=', way)
-      }
-      if (moved) {
-        console.log('移动后结果', this.tagArray, this.$refs[`elpp_${index}`])
-        this.tagSelectedIndex = targetIndex
-        // this.$refs[`elpp_${index}`].doClose()
-        // this.tagArray = JSON.parse(JSON.stringify(this.tagArray))
-        // this.$nextTick(() => {
-        //   this.$refs[`elpp_${targetIndex}`].doShow()
-        // })
-      }
-    },
-
-    // 选择标签方法
-    selectTag(index) {
-      if (this.tagSelectedIndex != index) {
-        this.tagSelectedIndex = index
-      } else {
-        this.tagSelectedIndex = -1
-      }
-    },
-
-    // 删除标签方法
-    deleteTag(index) {
-      this.tagArray.splice(index, 1)
-    },
-
-    // 添加标签确认按钮事件
-    addTagConfirmAndClose() {
-      this.$refs['addTagForm'].validate(valid => {
-        if (valid) {
-          const tagText = this.addTagDialog.text
-          this.addTagDataToArray(tagText)
-          this.addTagDialog.text = ''
-          this.addTagDialog.show = false
-        }
-      })
-    },
-    // 添加标签确认并继续按钮事件
-    addTagConfirm() {
-      this.$refs['addTagForm'].validate(valid => {
-        if (valid) {
-          const tagText = this.addTagDialog.text
-          this.addTagDataToArray(tagText)
-          this.addTagDialog.text = ''
-        }
-      })
-    },
-
-    // 向数组中添加数据方法
-    addTagDataToArray(tagName) {
-      tagName = tagName.trim()
-      let tagObject = {
-        name: tagName,
-        key: createUuid()
-      }
-      this.tagArray.push(tagObject)
-    },
-
-    // 添加标签点击事件
-    addTagClick() {
-      if (this.$refs['addTagForm']) {
-        this.$refs['addTagForm'].clearValidate()
-      }
-      this.addTagDialog.text = ''
-      this.addTagDialog.show = true
     },
 
     // 退出登陆方法
@@ -370,10 +256,8 @@ export default {
       this.otherSettings.articleCoverUrl = this.articleCoverUrl
       this.editDataModel.attribute = JSON.stringify(this.otherSettings)
       // 赋值文章标签
-      if (this.tagArray.length > 0) {
-        let tempArr = this.tagArray.map(x => x.name)
-        let tagsValue = tempArr.join(',')
-        this.editDataModel.tags = tagsValue
+      if (this.selectedTagArray.length > 0) {
+        this.editDataModel.tags = this.selectedTagArray.join(',')
       }
 
       this.$refs['dataForm'].validate((valid, errorInfo) => {
@@ -421,7 +305,7 @@ export default {
         if (this.editDataModel.tagsName) {
           let tempArr = res.tagsName.split(',')
           tempArr.forEach(x => {
-            this.addTagDataToArray(x)
+            this.selectedTagArray.push(parseInt(x))
           })
         }
         this.$refs['dataForm'].clearValidate()
@@ -455,24 +339,26 @@ export default {
   },
   mounted() {
     this.$store.dispatch('refleshUserInfo')
-    // 编辑的情况
-    if (this.$route.query.aid) {
-      this.editId = this.$route.query.aid
-      this.editMode = 'm'
-      this.topOperTitlePart = '编辑'
-      this.loadData()
-    } else {
-      // 新增的情况
-      this.editMode = 'n'
-      this.columnId = this.$route.query.cid
-      this.editDataModel.termTaxonomyId = this.columnId
-    }
-
+    // 初始化可供选择的标签列表
+    this.getSystemTagList().then(() => {
+      // 编辑的情况
+      if (this.$route.query.aid) {
+        this.editId = this.$route.query.aid
+        this.editMode = 'm'
+        this.topOperTitlePart = '编辑'
+        this.loadData()
+      } else {
+        // 新增的情况
+        this.editMode = 'n'
+        this.columnId = this.$route.query.cid
+        this.editDataModel.termTaxonomyId = this.columnId
+      }
+    })
     // 使md编辑器高度，随浏览器窗口自动变化
     let that = this
-    that.mdEditorHeight = (window.innerHeight - 55 - 90) + 'px'
+    that.mdEditorHeight = (window.innerHeight - 55 - 98) + 'px'
     window.addEventListener('resize', () => {
-      that.mdEditorHeight = (window.innerHeight - 55 - 90) + 'px'
+      that.mdEditorHeight = (window.innerHeight - 55 - 98) + 'px'
     })
   }
 }

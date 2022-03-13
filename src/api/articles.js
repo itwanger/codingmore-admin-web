@@ -40,6 +40,15 @@ export function updateArticle(data) {
   })
 }
 
+// 查询文章标签方法
+export function getTagList(params) {
+  return request({
+    url: `/postTag/queryPageable?_=${Math.random()}`,
+    method: 'get',
+    params
+  })
+}
+
 // 对接后台上传接口的方法
 export function mdEditorUploadImage(data) {
   return request({

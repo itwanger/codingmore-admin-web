@@ -1,11 +1,12 @@
 <template>
   <el-container>
     <!-- 左侧菜单区域 -->
-    <el-aside width="201px">
+    <!-- <el-aside :width="menuCollapsed ? 'auto': '201px'"> -->
+    <el-aside width="auto">
       <!-- <div class="logo text-center">
         <img src="../assets/logo-main.jpg" />
       </div> -->
-      <el-menu :default-active="$route.path" class="custom-nav" router>
+      <el-menu :collapse="menuCollapsed" :default-active="$route.path" class="custom-nav" router>
         <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
           <template slot="title">
             <i :class="item.icon"></i>
@@ -23,7 +24,7 @@
       <!-- 右侧顶部 -->
       <el-header class="flex-row-ver-center">
         <div class="bread-icon">
-          <i class="el-icon-s-unfold"></i>
+          <i :class="menuCollapsedIcon" @click="menuCollapsedClick"></i>
         </div>
         <!-- 面包屑 -->
         <div class="bread-container">
@@ -31,6 +32,7 @@
             <el-breadcrumb-item v-for="item in currentMatchedRoutes" :key="item.path" :to="{ path: item.path }">{{item.meta.title}}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
+        <!-- 用户头像 -->
         <div class="user-area">
           <el-dropdown trigger="click" @command="handleCommand">
             <span>
@@ -72,6 +74,11 @@ export default {
   },
   data() {
     return {
+      menuCollapsedIcon: 'el-icon-s-fold',
+
+      // 菜单是否处于最小化状态
+      menuCollapsed: false,
+
       // 在router中定义的，要显示在左侧导航的路由数组
       pageRouters,
 
@@ -88,7 +95,21 @@ export default {
       }
     }
   },
+  watch: {
+    menuCollapsed(val) {
+      if (val) {
+        this.menuCollapsedIcon = 'el-icon-s-unfold'
+      } else {
+        this.menuCollapsedIcon = 'el-icon-s-fold'
+      }
+    }
+  },
   methods: {
+    menuCollapsedClick() {
+      this.menuCollapsed = !this.menuCollapsed
+    },
+
+    // 处理点击头像弹出的下拉命令
     handleCommand(command) {
       if (command == 'q') {
         this.logoutSystemClick()
@@ -128,6 +149,10 @@ export default {
   margin-top: 5px;
 }
 
+.custom-nav:not(.el-menu--collapse) {
+  width: 200px;
+}
+
 .custom-nav .el-submenu__title i {
   color: #fff;
 }
@@ -138,6 +163,11 @@ export default {
   font-size: 18px;
   flex-shrink: 0;
 }
+
+.bread-icon > i {
+  cursor: pointer;
+}
+
 /* 面包屑容器样式 */
 .bread-container {
   flex-grow: 1;

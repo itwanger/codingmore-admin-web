@@ -10,8 +10,11 @@
         </el-select>
       </div>
       <div class="flex-fixed-item">
-        <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="search">
+        <el-button class="filter-item" style="margin-left:14px;" type="primary" icon="el-icon-search" @click="search">
           搜索
+        </el-button>
+        <el-button class="filter-item" type="primary" @click="setArticleColumns">
+          分配文章
         </el-button>
         <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
           新增
@@ -20,7 +23,7 @@
     </div>
     <div class="table-container">
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
-        <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
+        <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" />
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
         <el-table-column label="标题" prop="postTitle" />
         <!-- <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip /> -->
@@ -28,7 +31,7 @@
         <el-table-column label="发布时间" prop="postDate" width="155px" align="center">
           <template slot-scope="{row}">
             {{row.postDate.substr(0,16)}}
-            </template>
+          </template>
         </el-table-column>
         <el-table-column label="状态" prop="postStatus" width="80px" :formatter="statusFilter" align="center">
           <template slot-scope="{row}">
@@ -54,11 +57,28 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableAbout.listQuery.page" background :page-size="tableAbout.listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :page-sizes="[15, 30, 50, 100]" :total="tableAbout.listQuery.total">
       </el-pagination>
     </div>
+
+    <el-dialog title="分配文章到专栏" width="400px" :visible.sync="assignArticlesDialogShow">
+      <div class="filter-container">
+        <el-input v-model="searchTreeText" placeholder="专栏名称" @keyup.enter.native="searchTree">
+          <el-button slot="append" icon="el-icon-search" @click="searchTree" />
+        </el-input>
+      </div>
+      <div class="tree-area">
+        <el-tree ref="columnTree" :filter-node-method="filterNode" :auto-expand-parent="true" :highlight-current="true" :data="treeData" node-key="termTaxonomyId" :expand-on-click-node="false" :props="treeDefaultProps" show-checkbox :check-strictly="true" @current-change="handleTreeNodeChange" />
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="assignArticlesDialogShow = false">取 消</el-button>
+        <el-button type="primary" @click="confirmArticleToColumns">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getArticlePagedList, deleteArticle } from '@/api/articles'
+import { getArticlePagedList, deleteArticle, bindArticleToColumns } from '@/api/articles'
+import { loopExpendTree } from '@/utils/common'
+import { getAllColumns } from '@/api/columns'
 
 export default {
   name: 'ArticlesManagement',
@@ -78,11 +98,9 @@ export default {
           postStatus: ''
         },
         tableKey: 0,
-        tableData: []
+        tableData: [],
+        selectedRowList: [] // 被选中行集合
       },
-
-      // 拼接的栏目树的根节点，也就是当前站点
-      siteNodeOnTree: null,
 
       // 页面用来编辑的数据模型
       editDataModel: {
@@ -108,13 +126,16 @@ export default {
       treeDefaultProps: {
         children: 'children',
         label: 'name'
-      }
+      },
+      // 分配文章到专栏对话框的可见度
+      assignArticlesDialogShow: false
     }
   },
   mounted() {
-    // console.log('mounted中，当前站点变量：', this.currentSite)
-    // 初始化站点节点
+    // 获取文章列表
     this.getList()
+    // 获取专栏树数据
+    this.getTreeData()
 
     let _this = this
     window.refleshTable = (requestColumnId) => {
@@ -127,6 +148,78 @@ export default {
     }
   },
   methods: {
+    // 保存分配文章到专栏的方法
+    confirmArticleToColumns() {
+      const checkedNodes = this.$refs.columnTree.getCheckedNodes()
+      if (checkedNodes.length == 0) {
+        this.$message.info('请选择文章要分配到的栏目')
+        return false
+      }
+      const termTaxonomyIds = checkedNodes.map(item => item.termTaxonomyId)
+      const postsIds = this.tableAbout.selectedRowList.map(item => item.postsId)
+      bindArticleToColumns({ postsIds, termTaxonomyIds }).then(() => {
+        this.assignArticlesDialogShow = false
+        this.$notify({
+          title: '成功',
+          message: '分配文章成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
+      // console.log('checkedNodes=', checkedNodes, bindArticleToColumns)
+    },
+
+    // 获得树数据方法
+    getTreeData() {
+      getAllColumns().then(res => {
+        const columns = res
+        this.treeData = columns
+        if (this.treeSelectedNode === null) {
+          this.treeSelectedNode = this.treeData[0]
+        }
+      })
+    },
+    // 触发搜索树方法
+    searchTree() {
+      this.$refs.columnTree.filter(this.searchTreeText)
+    },
+    // 按名称搜索树节点方法
+    filterNode(value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    // 处理当前选中节点改变方法
+    handleTreeNodeChange(data, node) {
+      if (this.treeSelectedNode !== data) {
+        console.log('handleCurrentChange:重新赋值', data, node)
+        this.treeSelectedNode = data
+      }
+      if (node.expanded === false) {
+        node.expanded = true
+      }
+    },
+
+    // 分配文章到栏目的点击方法
+    setArticleColumns() {
+      if (this.tableAbout.selectedRowList.length == 0) {
+        this.$message.info('请先选择一篇或者多篇文章进行操作')
+        return false
+      }
+      this.assignArticlesDialogShow = true
+      this.searchTreeText = ''
+      this.$nextTick(() => {
+        this.$refs.columnTree.setCurrentKey(this.treeSelectedNode.termTaxonomyId)
+        const theNode = this.$refs.columnTree.getNode(this.treeSelectedNode.termTaxonomyId)
+        this.handleTreeNodeChange(theNode.data, theNode)
+        console.log('获得当前选中节点：：：', theNode)
+        console.log('当前treeSelectedNode', this.treeSelectedNode, theNode.data)
+        loopExpendTree(this.$refs.columnTree, theNode, 0)
+        if (this.searchTreeText !== '') {
+          this.searchTree()
+        }
+      })
+    },
+
     // 处理页码改变事件
     handleSizeChange(val) {
       this.tableAbout.listQuery.pageSize = val
@@ -183,19 +276,9 @@ export default {
       }
     },
 
-    // 触发搜索树方法
-    searchTree() {
-      this.$refs.columnTree.filter(this.searchTreeText)
-    },
-
-    // 按名称搜索树节点方法
-    filterNode(value, data) {
-      if (!value) return true
-      return data.name.indexOf(value) !== -1
-    },
     // 处理table选中行改变方法
     handleSelectionChange(val) {
-      console.log('table选中行改变', val)
+      this.tableAbout.selectedRowList = val
     },
     // 获得站点树节点——即根节点
     getTreeNodeOfSite() {
@@ -261,6 +344,8 @@ export default {
 }
 .tree-area {
   margin-top: 10px;
+  height: 400px;
+  overflow: auto;
 }
 
 .table-container {

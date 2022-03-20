@@ -28,8 +28,8 @@
           </div>
         </div>
         <div class="table-container">
-          <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableKey" :data="treeSelectedNode !== null ? treeSelectedNode.children : []" border fit highlight-current-row style="width: 100%;" @selection-change="handleSelectionChange">
-            <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" />
+          <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableKey" :data="treeSelectedNode !== null ? treeSelectedNode.children : []" border fit highlight-current-row style="width: 100%;">
+            <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
             <el-table-column label="编号" prop="termTaxonomyId" align="center" width="80px">
               <!-- <template slot-scope="{row}">
               <span>{{ row.termTaxonomyId }}</span>
@@ -52,12 +52,12 @@
       </el-col>
     </el-row>
     <el-dialog v-loading="dialogLoading" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="columnDataModel" label-position="left" label-width="100px" style="width: 800px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="columnDataModel" label-position="right" label-width="100px">
         <el-form-item label="栏目名称" prop="name">
           <el-input v-model="columnDataModel.name" maxlength="20" placeholder="请输入栏目名称" />
         </el-form-item>
         <el-form-item label="栏目描述">
-          <el-input v-model="columnDataModel.description" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="请输入栏目描述" maxlength="1000" />
+          <el-input v-model="columnDataModel.description" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="请输入栏目描述" maxlength="300" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -229,9 +229,9 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     // 处理table选中行改变方法
-    handleSelectionChange(val) {
-      console.log('table选中行改变', val)
-    },
+    // handleSelectionChange(val) {
+    //   console.log('table选中行改变', val)
+    // },
     // 重置栏目编辑对象
     resetSiteDataModel(currentColumnId) {
       this.columnDataModel = {

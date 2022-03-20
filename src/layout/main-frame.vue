@@ -48,7 +48,7 @@
       </el-header>
       <!-- 右侧主页面部分 -->
       <el-main>
-        <router-view />
+        <router-view :key="$route.path + ($route.query.aid || '')" />
       </el-main>
     </el-container>
     <el-dialog title="修改密码" :visible="modifyPasswordVisible">

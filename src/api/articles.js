@@ -59,4 +59,13 @@ export function mdEditorUploadImage(data) {
   })
 }
 
+// 绑定文章到栏目上
+export function bindArticleToColumns(data) {
+  return request({
+    url: '/posts/insertPostTermTaxonomy',
+    method: 'post',
+    data
+  })
+}
+
 export const uploadUrl = process.env.VUE_APP_BASE_API + '/ossController/upload'

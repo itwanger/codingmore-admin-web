@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import mainFrame from '@/layout'
 import articles from '../views/content-management/article-management'
-// import columns from '../views/content-management/column-management'
+import columns from '../views/content-management/column-management'
 import articleEdit from '../views/content-management/article-editing'
 // import users from '../views/system-management/users-management'
 // import power from '../views/system-management/power-management'
@@ -45,6 +45,15 @@ export const pageRouters = [
         meta: {
           title: '文章列表'
         }
+      },
+      {
+        path: 'columns',
+        name: 'column-management',
+        icon: 'el-icon-s-grid',
+        component: columns,
+        meta: {
+          title: '专栏管理'
+        }
       }
     ]
   },
@@ -62,7 +71,7 @@ export const pageRouters = [
         path: 'site',
         name: 'site-configuration',
         component: siteConfig,
-        icon: 'el-icon-s-grid',
+        icon: 'el-icon-set-up',
         meta: {
           title: '站点配置'
         }

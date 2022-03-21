@@ -13,9 +13,9 @@
         <el-button class="filter-item" style="margin-left:14px;" type="primary" icon="el-icon-search" @click="search">
           搜索
         </el-button>
-        <el-button class="filter-item" type="primary" @click="setArticleColumns">
+        <!-- <el-button class="filter-item" type="primary" @click="setArticleColumns">
           分配文章
-        </el-button>
+        </el-button> -->
         <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
           新增
         </el-button> -->
@@ -25,7 +25,12 @@
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
         <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" />
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-        <el-table-column label="标题" prop="postTitle" />
+        <el-table-column label="标题" prop="postTitle" >
+          <template slot-scope="{row}">
+            <el-link @click="handleUpdate(row)">{{row.postTitle}}</el-link>
+            <!-- <el-button @click="handleUpdate(row)" type="text">{{row.postTitle}}</el-button> -->
+          </template>
+        </el-table-column>
         <!-- <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip /> -->
         <el-table-column label="作者" prop="userNiceName" width="100px" align="center" />
         <el-table-column label="发布时间" prop="postDate" width="155px" align="center">

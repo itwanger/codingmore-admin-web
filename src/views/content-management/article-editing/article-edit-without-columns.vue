@@ -213,10 +213,28 @@ export default {
 
     // md编辑器上传图片方法
     handleEditorImgAdd(pos, $file) {
-      var formdata = new FormData()
+      let formdata = new FormData()
       formdata.append('file', $file)
       mdEditorUploadImage(formdata).then(res => {
         this.$refs.md.$img2Url(pos, res)
+        this.$nextTick(() => {
+          let mdCurrentValue = this.editDataModel.postContent
+          // 查找图片插入的字符串位置
+          let pattern = /(!\[.*\]\()(.+)(\))/g
+          let matchArr = mdCurrentValue.match(pattern)
+          for (let i = matchArr.length - 1; i >= 0; i--) {
+            const item = matchArr[i]
+            if (item.indexOf(res) > -1) {
+              const imgStrIndex = mdCurrentValue.indexOf(item)
+              const prevChar = mdCurrentValue.substr(imgStrIndex - 1, 1)
+              const nextChar = mdCurrentValue.substr(imgStrIndex + item.length, 1)
+              let repItem = (prevChar == '\n' ? '' : '\n') + item + (nextChar == '\n' ? '' : '\n')
+              if (repItem.length != item.length) {
+                this.editDataModel.postContent = mdCurrentValue.replace(item, repItem)
+              }
+            }
+          }
+        })
       })
     },
 

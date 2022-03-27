@@ -10,6 +10,7 @@
         <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
           <template slot="title">
             <i :class="item.icon"></i>
+            <!-- <bookmark theme="outline" size="24" /> -->
             <span>{{item.meta.title}}</span>
           </template>
           <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
@@ -63,10 +64,10 @@ import { pageRouters } from '../router'
 import { userLogout } from '../api/users'
 import { removeToken } from '../utils/auth'
 import { Bookmark } from '@icon-park/vue'
-import '@icon-park/vue/styles/index.css'
+
 export default {
   name: 'mainFrame',
-  components: Bookmark,
+  components: {Bookmark},
   computed: {
     // 当前面包屑使用数据
     currentMatchedRoutes() {

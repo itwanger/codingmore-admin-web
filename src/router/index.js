@@ -4,7 +4,7 @@ import mainFrame from '@/layout'
 import articles from '../views/content-management/article-management'
 // import columns from '../views/content-management/column-management'
 import articleEdit from '../views/content-management/article-editing'
-// import users from '../views/system-management/users-management'
+import users from '../views/system-management/users-management'
 // import power from '../views/system-management/power-management'
 // import log from '../views/system-management/log-management'
 import siteConfig from '../views/system-management/site-configuration'
@@ -75,15 +75,16 @@ export const pageRouters = [
         meta: {
           title: '站点配置'
         }
+      },
+      {
+        path: 'users',
+        name: 'users-management',
+        component: users,
+        icon: 'el-icon-user',
+        meta: {
+          title: '用户管理'
+        }
       }
-      // {
-      //   path: 'users',
-      //   name: 'users-management',
-      //   component: users,
-      //   meta: {
-      //     title: '用户管理'
-      //   }
-      // },
       // {
       //   path: 'power',
       //   name: 'power-management',

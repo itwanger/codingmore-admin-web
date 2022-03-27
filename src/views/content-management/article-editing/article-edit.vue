@@ -126,7 +126,7 @@
   </el-row>
 </template>
 <script>
-import { UserLogout } from '@/api/users'
+import { userLogout } from '@/api/users'
 import { removeToken } from '@/utils/auth'
 import { getArticleById, deleteArticle, createArticle, updateArticle } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
@@ -295,7 +295,7 @@ export default {
     // 退出登陆方法
     logoutSystemClick() {
       // 调用服务器方法退出登陆
-      UserLogout().then(() => {
+      userLogout().then(() => {
         // 移除token
         removeToken()
         // 移除vuex中的用户信息

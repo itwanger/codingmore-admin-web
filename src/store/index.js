@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {
-  GetLoginUserInfo
+  getLoginUserInfo
 } from '../api/users'
 
 Vue.use(Vuex)
@@ -22,7 +22,7 @@ export default new Vuex.Store({
     refleshUserInfo({
       commit
     }) {
-      GetLoginUserInfo().then(res => {
+      getLoginUserInfo().then(res => {
         console.log('获取登录用户信息成功', res)
         commit('SET_USER_INFO', res)
       }).catch(rej => {

@@ -14,6 +14,7 @@
           </template>
           <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
             <i :class="subitem.icon"></i>
+            <!-- <book-mark theme="outline" size="25" fill="#000"/> -->
             <span>{{subitem.meta.title}}</span>
           </el-menu-item>
         </el-submenu>
@@ -59,10 +60,13 @@
 
 <script>
 import { pageRouters } from '../router'
-import { UserLogout } from '../api/users'
+import { userLogout } from '../api/users'
 import { removeToken } from '../utils/auth'
+import { Bookmark } from '@icon-park/vue'
+import '@icon-park/vue/styles/index.css'
 export default {
   name: 'mainFrame',
+  components: Bookmark,
   computed: {
     // 当前面包屑使用数据
     currentMatchedRoutes() {
@@ -118,7 +122,7 @@ export default {
 
     logoutSystemClick() {
       // 调用服务器方法退出登陆
-      UserLogout().then(() => {
+      userLogout().then(() => {
         // 移除token
         removeToken()
         // 移除vuex中的用户信息

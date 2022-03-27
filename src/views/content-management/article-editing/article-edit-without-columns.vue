@@ -58,8 +58,7 @@
   </el-row>
 </template>
 <script>
-import { UserLogout } from '@/api/users'
-import { removeToken, getToken } from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 import { getArticleById, deleteArticle, createArticle, updateArticle, getTagList, mdEditorUploadImage, uploadUrl } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
 import { createUuid, handleFormValidError } from '@/utils/common'
@@ -243,18 +242,6 @@ export default {
       this.editDataModel.htmlContent = transToHtml
     },
 
-    // 退出登陆方法
-    logoutSystemClick() {
-      // 调用服务器方法退出登陆
-      UserLogout().then(() => {
-        // 移除token
-        removeToken()
-        // 移除vuex中的用户信息
-        this.$store.dispatch('removeUserInfo')
-        // 跳转到登录页面
-        this.$router.push('/login')
-      })
-    },
     // 弹出警告错误信息提示，点击确定后关闭窗口方法
     alertMessageAndCloseWindow(message, iconType) {
       this.$alert(message, {

@@ -1,0 +1,56 @@
+.tree-area {
+  margin-top: 10px;
+  height: 400px;
+  overflow: auto;
+}
+
+.table-container {
+  height: calc(100% - 32px - 41px);
+  box-sizing: border-box;
+  padding-top: 8px;
+}
+
+/* 上传头像相关样式 */
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
+  text-align: center;
+}
+.avatar {
+  width: 148px;
+  height: 148px;
+  display: block;
+}
+
+.user-image-container {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.user-image-float-layer {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 148px;
+  height: 148px;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 70%);
+}

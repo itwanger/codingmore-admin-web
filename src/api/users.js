@@ -87,3 +87,14 @@ export function setUserRoles(data) {
     data
   })
 }
+
+// 修改用户当前启用禁用状态方法
+export function setUserStatus(data) {
+  return request({
+    url: '/users/enableOrDisable',
+    method: 'post',
+    data
+  })
+}
+
+export const uploadUrl = process.env.VUE_APP_BASE_API + '/ossController/upload'

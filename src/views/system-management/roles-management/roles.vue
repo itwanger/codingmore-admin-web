@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>This powers page</h1>
+    <h1>This logs page</h1>
   </div>
 </template>

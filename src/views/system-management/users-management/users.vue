@@ -108,7 +108,7 @@ import qs from 'qs'
 import './page.css'
 
 export default {
-  name: 'ArticlesManagement',
+  name: 'UsersManagement',
   data() {
     return {
       uploadUrl,

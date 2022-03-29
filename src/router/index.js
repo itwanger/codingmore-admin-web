@@ -6,7 +6,7 @@ import articles from '../views/content-management/article-management'
 import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
 // import power from '../views/system-management/power-management'
-// import log from '../views/system-management/log-management'
+import sourceCategories from '../views/system-management/source-category-management'
 import siteConfig from '../views/system-management/site-configuration'
 import page404 from '../views/error-pages/404'
 import page500 from '../views/error-pages/500'
@@ -84,15 +84,16 @@ export const pageRouters = [
         meta: {
           title: '用户管理'
         }
+      },
+      {
+        path: 'source-categories',
+        name: 'source-categories-management',
+        component: sourceCategories,
+        icon: 'el-icon-coin',
+        meta: {
+          title: '资源分类管理'
+        }
       }
-      // {
-      //   path: 'power',
-      //   name: 'power-management',
-      //   component: power,
-      //   meta: {
-      //     title: '权限管理'
-      //   }
-      // },
       // {
       //   path: 'log',
       //   name: 'log-management',

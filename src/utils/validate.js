@@ -92,7 +92,24 @@ export const emptyChecker = (rule, value, callback) => {
   if (!value && value !== 0) {
     // 参数无用
     callback(new Error('不能为空'))
-  } else {
+  }
+  callback()
+}
+
+export const emptyOrIntegerChecker = (rule, value, callback) => {
+  let valueToValid = value
+  if (typeof valueToValid !== 'string') {
+    valueToValid = valueToValid.toString().trim()
+  }
+
+  if (valueToValid.length == 0) {
     callback()
   }
+
+  const reg = /^(0|[1-9][0-9]*|-[1-9][0-9]*)/g
+  let result = valueToValid.match(reg)
+  if (result.length !== valueToValid.length) {
+    callback(new Error('必须为整数'))
+  }
+  callback()
 }

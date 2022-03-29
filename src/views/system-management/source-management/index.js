@@ -1,3 +1,3 @@
-import powers from './source.vue'
+import source from './source.vue'
 
-export default powers
+export default source

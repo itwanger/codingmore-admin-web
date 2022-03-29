@@ -1,3 +1,3 @@
-import powers from './source-category.vue'
+import sourceCategories from './source-categories.vue'
 
-export default powers
+export default sourceCategories

@@ -1,3 +1,3 @@
-import source from './source.vue'
+import source from './sources.vue'
 
 export default source

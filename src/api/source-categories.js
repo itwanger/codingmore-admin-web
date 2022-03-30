@@ -1,10 +1,10 @@
 import request from '../utils/request'
 // 查询资源分类列表方法
-export function getSourceCategoryList(param) {
+export function getSourceCategoryList(params) {
   return request({
     url: '/resourceCategory/listAll',
     method: 'get',
-    param
+    params
   })
 }
 

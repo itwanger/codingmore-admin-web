@@ -7,6 +7,7 @@ import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
 // import power from '../views/system-management/power-management'
 import sourceCategories from '../views/system-management/source-category-management'
+import sources from '../views/system-management/source-management'
 import siteConfig from '../views/system-management/site-configuration'
 import page404 from '../views/error-pages/404'
 import page500 from '../views/error-pages/500'
@@ -83,6 +84,15 @@ export const pageRouters = [
         icon: 'el-icon-user',
         meta: {
           title: '用户管理'
+        }
+      },
+      {
+        path: 'sources',
+        name: 'sources',
+        component: sources,
+        icon: 'el-icon-coin',
+        meta: {
+          title: '资源管理'
         }
       },
       {

@@ -13,9 +13,9 @@
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table">
         <el-table-column label="编号" prop="resourceCategoryId" width="80px" align="center" />
         <el-table-column label="名称" prop="name" />
-        <el-table-column label="创建时间" prop="createTime" align="center" />
+        <el-table-column label="添加时间" prop="createTime" align="center" />
         <el-table-column label="排序号" prop="sort" align="center" />
-        <el-table-column label="操作" align="center" width="280px">
+        <el-table-column label="操作" align="center" width="160px">
           <template slot-scope="{ row }">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑

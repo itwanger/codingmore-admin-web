@@ -5,7 +5,7 @@ import articles from '../views/content-management/article-management'
 // import columns from '../views/content-management/column-management'
 import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
-// import power from '../views/system-management/power-management'
+import menus from '../views/system-management/menu-management'
 import sourceCategories from '../views/system-management/source-category-management'
 import sources from '../views/system-management/source-management'
 import siteConfig from '../views/system-management/site-configuration'
@@ -84,6 +84,15 @@ export const pageRouters = [
         icon: 'el-icon-user',
         meta: {
           title: '用户管理'
+        }
+      },
+      {
+        path: 'menus',
+        name: 'menus',
+        component: menus,
+        icon: 'el-icon-menu',
+        meta: {
+          title: '菜单管理'
         }
       },
       {

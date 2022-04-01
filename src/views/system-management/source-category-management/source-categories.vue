@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { getToken } from '@/utils/auth'
 import { getSourceCategoryList, addSourceCatagory, updateSourceCatagory, deleteSourceCatagory } from '@/api/source-categories'
 import { emptyChecker, emptyOrIntegerChecker } from '@/utils/validate'
 import qs from 'qs'
@@ -86,7 +85,6 @@ export default {
     this.getList()
   },
   methods: {
-    getToken,
 
     // 列表查询方法
     getList() {

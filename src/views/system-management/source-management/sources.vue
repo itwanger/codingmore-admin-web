@@ -85,7 +85,7 @@ import { emptyChecker } from '@/utils/validate'
 import qs from 'qs'
 
 export default {
-  name: 'UsersManagement',
+  name: 'SourceManagement',
   data() {
     return {
       // 文章列表相关属性

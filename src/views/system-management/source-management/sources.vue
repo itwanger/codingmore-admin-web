@@ -34,7 +34,7 @@
             {{ categoryFormatter(row.categoryId) }}
           </template>
         </el-table-column>
-        <el-table-column label="描述" prop="description" align="center" />
+        <el-table-column label="描述" prop="description" />
         <el-table-column label="添加时间" prop="createTime" align="center" width="180px" />
         <el-table-column label="操作" align="center" width="160px">
           <template slot-scope="{ row }">
@@ -62,7 +62,7 @@
           <el-input v-model="editDataModel.url" autocomplete="off" maxlength="80" placeholder="请输入资源路径"></el-input>
         </el-form-item>
         <el-form-item label="资源分类" prop="categoryId">
-          <el-select v-model="editDataModel.categoryId" placeholder="资源分类">
+          <el-select v-model="editDataModel.categoryId" filterable placeholder="资源分类">
             <el-option v-for="item in categoryList" :label="item.label" :value="item.value" :key="item.value">{{item.label}}</el-option>
           </el-select>
         </el-form-item>
@@ -233,7 +233,7 @@ export default {
     },
     // 修改按钮点击方法
     handleUpdate(row) {
-      getSourceInfo({ id: row.categoryId }).then(res => {
+      getSourceInfo({ id: row.resourceId }).then(res => {
         this.editDataModel = res
         this.openEditDialog(1)
       })

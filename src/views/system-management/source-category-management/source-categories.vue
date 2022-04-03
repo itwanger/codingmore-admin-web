@@ -29,7 +29,7 @@
     </div>
 
     <el-dialog :title="editDialog.title[editDialog.status]" width="400px" :visible.sync="editDialog.visible">
-      <el-form ref="categoryInfoForm" :model="editDataModel" :rules="editDialog.rules" label-position="right" label-width="60px">
+      <el-form ref="editInfoForm" :model="editDataModel" :rules="editDialog.rules" label-position="right" label-width="60px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="editDataModel.name" autocomplete="off" maxlength="20" placeholder="请输入分类名称"></el-input>
         </el-form-item>
@@ -95,7 +95,7 @@ export default {
 
     // 保存用户信息方法
     saveCategoryInfo() {
-      this.$refs['categoryInfoForm'].validate((valid) => {
+      this.$refs['editInfoForm'].validate((valid) => {
         if (valid) {
           const saveFunc = this.editDialog.status == 0 ? addSourceCatagory : updateSourceCatagory
           saveFunc(qs.stringify(this.editDataModel)).then(() => {
@@ -121,17 +121,24 @@ export default {
       }
     },
 
+    // 打开编辑对话框方法
+    openEditDialog(dialogStatus) {
+      this.editDialog.status = dialogStatus
+      if (this.$refs['editInfoForm']) {
+        this.$refs['editInfoForm'].clearValidate()
+      }
+      this.editDialog.visible = true
+    },
+
     // 新增按钮点击方法
     handleCreate() {
-      this.editDialog.status = 0
       this.getAddCategoryModel()
-      this.editDialog.visible = true
+      this.openEditDialog(0)
     },
     // 修改按钮点击方法
     handleUpdate(row) {
-      this.editDialog.status = 1
       this.editDataModel = row
-      this.editDialog.visible = true
+      this.openEditDialog(1)
     },
     // 行删除按钮处理
     handleDelete(row) {

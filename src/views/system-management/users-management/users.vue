@@ -25,20 +25,20 @@
         <el-table-column label="添加时间" prop="userRegistered" align="center" />
         <el-table-column label="状态" prop="userStatus" align="center">
           <template slot-scope="{ row }">
-            <el-switch v-model="row.userStatus" :active-value="0" :inactive-value="1" @change="userStatusChange($event, row.id)">
+            <el-switch v-model="row.userStatus" :active-value="0" :inactive-value="1" @change="handleStatusChange($event, row.id)">
             </el-switch>
           </template>
         </el-table-column>
         <!-- <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" /> -->
         <el-table-column label="操作" align="center" width="280px">
-          <template slot-scope="{ row, $index }">
+          <template slot-scope="{ row }">
             <el-button type="success" size="mini" @click="handleUpdate(row)">
               分配角色
             </el-button>
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
-            <el-button v-if="row.status != 'deleted'" size="mini" type="danger" @click="handleDelete(row, $index)">
+            <el-button v-if="row.status != 'deleted'" size="mini" type="danger" @click="handleDelete(row)">
               删除
             </el-button>
           </template>
@@ -51,7 +51,7 @@
     </div>
 
     <el-dialog :title="editDialog.title[editDialog.status]" width="500px" :visible.sync="editDialog.visible">
-      <el-form ref="userInfoForm" :model="editDataModel" :rules="editDialog.rules" label-position="right" label-width="60px">
+      <el-form ref="editInfoForm" :model="editDataModel" :rules="editDialog.rules" label-position="right" label-width="60px">
         <el-form-item label="头像" v-if="editDialog.status === 1">
           <div class="user-image-container" v-if="editDataModel.userUrl" @mouseover="userImageOptionsShow = true" @mouseleave="userImageOptionsShow = false">
             <img :src="editDataModel.userUrl" class="avatar">
@@ -184,7 +184,7 @@ export default {
     },
 
     // 启用/禁用用户事件处理方法
-    userStatusChange(status, usersId) {
+    handleStatusChange(status, usersId) {
       const reqData = qs.stringify({ status, usersId })
       setUserStatus(reqData).then(() => {
         this.$message.success('操作成功')
@@ -219,7 +219,7 @@ export default {
 
     // 保存用户信息方法
     saveUserInfo() {
-      this.$refs['userInfoForm'].validate((valid) => {
+      this.$refs['editInfoForm'].validate((valid) => {
         if (valid) {
           const saveFunc = this.editDialog.status == 0 ? addUser : updateUserInfoById
           saveFunc(qs.stringify(this.editDataModel)).then(() => {
@@ -260,22 +260,29 @@ export default {
       }
     },
 
+    // 打开编辑对话框方法
+    openEditDialog(dialogStatus) {
+      this.editDialog.status = dialogStatus
+      if (this.$refs['editInfoForm']) {
+        this.$refs['editInfoForm'].clearValidate()
+      }
+      this.editDialog.visible = true
+    },
+
     // 新增按钮点击方法
     handleCreate() {
-      this.editDialog.status = 0
       this.getAddUserModel()
-      this.editDialog.visible = true
+      this.openEditDialog(0)
     },
     // 修改按钮点击方法
     handleUpdate(row) {
-      this.editDialog.status = 1
       getUserInfoById({ usersId: row.id }).then(res => {
         this.getUpdateUserModel(res)
-        this.editDialog.visible = true
+        this.openEditDialog(1)
       })
     },
     // 行删除按钮处理
-    handleDelete(row, index) {
+    handleDelete(row) {
       const confirmMes = '是否确认删除该用户？'
       this.$confirm(confirmMes, '系统提示', {
         confirmButtonText: '确认',

@@ -5,6 +5,7 @@ import articles from '../views/content-management/article-management'
 // import columns from '../views/content-management/column-management'
 import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
+import roles from '../views/system-management/roles-management'
 import menus from '../views/system-management/menu-management'
 import sourceCategories from '../views/system-management/source-category-management'
 import sources from '../views/system-management/source-management'
@@ -84,6 +85,15 @@ export const pageRouters = [
         icon: 'el-icon-user',
         meta: {
           title: '用户管理'
+        }
+      },
+      {
+        path: 'roles',
+        name: 'roles-management',
+        component: roles,
+        icon: 'el-icon-user',
+        meta: {
+          title: '角色管理'
         }
       },
       {

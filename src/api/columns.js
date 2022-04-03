@@ -1,5 +1,6 @@
 import request from '../utils/request'
 
+// 获得所有专栏
 export function getAllColumns(params) {
   return request({
     url: `/termTaxonomy/getPyParentId`,
@@ -8,6 +9,7 @@ export function getAllColumns(params) {
   })
 }
 
+// 根据id查询专栏详情
 export function getOneColumn(params) {
   return request({
     url: `/termTaxonomy/getById`,
@@ -16,6 +18,7 @@ export function getOneColumn(params) {
   })
 }
 
+// 更新专栏保存方法
 export function updateColumn(data) {
   return request({
     url: '/termTaxonomy/update',
@@ -24,6 +27,7 @@ export function updateColumn(data) {
   })
 }
 
+// 添加专栏保存方法
 export function addColumn(data) {
   return request({
     url: '/termTaxonomy/insert',
@@ -32,6 +36,7 @@ export function addColumn(data) {
   })
 }
 
+// 删除专栏方法
 export function deleteColumn(id) {
   return request({
     url: `/termTaxonomy/delete?_=${Math.random()}`,

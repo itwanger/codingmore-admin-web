@@ -96,6 +96,12 @@ export const emptyChecker = (rule, value, callback) => {
   callback()
 }
 
+/**
+ * 校验规则，可通过的值为：空或者整数
+ * @param {object} rule 校验规则对象
+ * @param {any} value 表单值
+ * @param {function} callback 系统回调函数
+ */
 export const emptyOrIntegerChecker = (rule, value, callback) => {
   let valueToValid = value
   if (typeof valueToValid !== 'string') {
@@ -106,9 +112,27 @@ export const emptyOrIntegerChecker = (rule, value, callback) => {
     callback()
   }
 
-  const reg = /^(0|[1-9][0-9]*|-[1-9][0-9]*)/g
-  let result = valueToValid.match(reg)
-  if (result.length !== valueToValid.length) {
+  const reg = /^(-|\d)*\d$/g
+  if (!reg.test(valueToValid)) {
+    callback(new Error('必须为整数'))
+  }
+  callback()
+}
+
+/**
+ * 校验规则，可通过的值为：整数
+ * @param {object} rule 校验规则对象
+ * @param {any} value 表单值
+ * @param {function} callback 系统回调函数
+ */
+export const integerChecker = (rule, value, callback) => {
+  let valueToValid = value
+  if (typeof valueToValid !== 'string') {
+    valueToValid = valueToValid.toString().trim()
+  }
+
+  const reg = /^(-|\d)*\d$/g
+  if (!reg.test(valueToValid)) {
     callback(new Error('必须为整数'))
   }
   callback()

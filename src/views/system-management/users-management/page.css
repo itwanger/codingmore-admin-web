@@ -33,6 +33,7 @@
   width: 148px;
   height: 148px;
   display: block;
+  border-radius: 6px;
 }
 
 .user-image-container {
@@ -53,4 +54,9 @@
   height: 148px;
   z-index: 999;
   background-color: rgba(0, 0, 0, 70%);
+}
+
+.role-split-area{
+  max-height: 500px;
+  overflow: auto;
 }

@@ -9,13 +9,15 @@
       <el-menu :collapse="menuCollapsed" :default-active="$route.path" class="custom-nav" router>
         <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
           <template slot="title">
-            <i :class="item.icon"></i>
+            <!-- <i :class="item.icon"></i> -->
             <!-- <bookmark theme="outline" size="24" /> -->
+            <more-icon :iconClass="item.icon"></more-icon>
             <span>{{item.meta.title}}</span>
           </template>
           <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
-            <i :class="subitem.icon"></i>
+            <!-- <i :class="subitem.icon"></i> -->
             <!-- <book-mark theme="outline" size="25" fill="#000"/> -->
+            <more-icon :iconClass="subitem.icon"></more-icon>
             <span>{{subitem.meta.title}}</span>
           </el-menu-item>
         </el-submenu>
@@ -63,11 +65,11 @@
 import { pageRouters } from '../router'
 import { userLogout } from '../api/users'
 import { removeToken } from '../utils/auth'
-import { Bookmark } from '@icon-park/vue'
+import MoreIcon from '../components/more-icon'
 
 export default {
   name: 'mainFrame',
-  components: {Bookmark},
+  components: { MoreIcon },
   computed: {
     // 当前面包屑使用数据
     currentMatchedRoutes() {

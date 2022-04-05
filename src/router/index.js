@@ -42,7 +42,7 @@ export const pageRouters = [
       {
         path: 'articles',
         name: 'article-management',
-        icon: 'el-icon-notebook-2',
+        icon: 'iconpark-list-two',
         component: articles,
         meta: {
           title: '文章列表'
@@ -73,7 +73,7 @@ export const pageRouters = [
         path: 'site',
         name: 'site-configuration',
         component: siteConfig,
-        icon: 'el-icon-set-up',
+        icon: 'iconpark-config',
         meta: {
           title: '站点配置'
         }
@@ -91,7 +91,7 @@ export const pageRouters = [
         path: 'roles',
         name: 'roles-management',
         component: roles,
-        icon: 'el-icon-user',
+        icon: 'iconfont-role-management',
         meta: {
           title: '角色管理'
         }
@@ -100,7 +100,7 @@ export const pageRouters = [
         path: 'menus',
         name: 'menus',
         component: menus,
-        icon: 'el-icon-menu',
+        icon: 'iconfont-menu-management',
         meta: {
           title: '菜单管理'
         }
@@ -109,7 +109,7 @@ export const pageRouters = [
         path: 'sources',
         name: 'sources',
         component: sources,
-        icon: 'el-icon-coin',
+        icon: 'iconfont-source-management',
         meta: {
           title: '资源管理'
         }

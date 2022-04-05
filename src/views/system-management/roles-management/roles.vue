@@ -90,9 +90,23 @@
     </el-dialog>
     <!-- 分配资源对话框 -->
     <el-dialog title="分配资源" width="700px" :visible.sync="setSourcePowerDialogShow">
+      <div class="source-split-area">
+        <el-card v-for="item in sourceFormdData" :key="item.id" class="box-card">
+          <div slot="header" class="clearfix">
+            <el-checkbox :indeterminate="item.checkedIds.length > 0 && item.checkedIds.length !== item.options.length" v-model="item.checked" @change="handleCheckAllChange($event, item)">{{ item.label }}</el-checkbox>
+          </div>
+          <el-checkbox-group v-model="item.checkedIds">
+            <el-row>
+              <el-col :span="8" v-for="(subItem) in item.options" :key="subItem.value">
+                <el-checkbox :label="subItem.value">{{subItem.label}}</el-checkbox>
+              </el-col>
+            </el-row>
+          </el-checkbox-group>
+        </el-card>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="setSourcePowerDialogShow = false">取 消</el-button>
-        <el-button type="primary" @click="saveRoleMenuPower">确 定</el-button>
+        <el-button type="primary" @click="saveRoleSourcePower">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -101,7 +115,9 @@
 <script>
 import { getAllMenusTree } from '@/api/menus'
 import { getSourceAllList } from '@/api/sources'
-import { getRoleList, setRoleStatus, addRole,
+import { getSourceCategoryList } from '@/api/source-categories'
+import {
+  getRoleList, setRoleStatus, addRole,
   updateRole, deleteRoleBatch,
   getRoleOwnedMenuList, setMenuPowerForRole,
   getRoleOwnedSourceList, setSourcePowerForRole} from '@/api/roles'
@@ -155,11 +171,15 @@ export default {
         children: 'children',
         label: 'title'
       },
+      treeDataList: [],
+
       // 分配菜单对话框的可见度
       setManuPowerDialogShow: false,
 
       // 分配资源对话框的可见度
-      setSourcePowerDialogShow: false
+      setSourcePowerDialogShow: false,
+      // 资源可选项数据，用来构建界面，记录选择项使用
+      sourceFormdData: []
     }
   },
   mounted() {
@@ -172,9 +192,23 @@ export default {
     // 分配菜单点击事件
     handleSetMenu(row) {
       getRoleOwnedMenuList({ roleId: row.roleId }).then((res) => {
-        console.log('获得角色拥有的菜单数据', res)
         this.operatingRoleId = row.roleId
         this.setManuPowerDialogShow = true
+        this.$nextTick(() => {
+          if (res.length > 0) {
+            let valuesToSet = []
+            res.forEach(item => {
+              let marked = this.treeDataList.find(x => x.isLeaf && x.menuId === item.menuId)
+              console.log('marked=', marked)
+              if (marked) {
+                valuesToSet.push(item.menuId)
+              }
+            })
+            this.$refs.columnTree.setCheckedKeys(valuesToSet, true)
+          } else {
+            this.$refs.columnTree.setCheckedKeys([])
+          }
+        })
       })
     },
 
@@ -183,6 +217,11 @@ export default {
       getRoleOwnedSourceList({ roleId: row.roleId }).then((res) => {
         console.log('获得角色拥有的资源数据', res)
         this.operatingRoleId = row.roleId
+        this.sourceFormdData.forEach(item => {
+          let matchedCategoryItems = res.filter(x => x.categoryId === item.id)
+          item.checkedIds = matchedCategoryItems.map(x => x.resourceId)
+          item.checked = item.checkedIds.length === item.options.length
+        })
         this.setSourcePowerDialogShow = true
       })
     },
@@ -291,18 +330,54 @@ export default {
     },
     // 获得所有资源方法
     getAllSource() {
-      getSourceAllList().then((res) => {
-        // console.log('加载所有资源列表', res)
+      getSourceCategoryList().then(res => {
+        this.sourceFormdData = res.map(item => {
+          return { id: item.resourceCategoryId, checked: false, halfChecked: false, label: item.name, options: [], checkedIds: [] }
+        })
+      }).then(() => {
+        getSourceAllList().then(res => {
+          // console.log('加载所有资源列表', res)
+          this.sourceFormdData.forEach(item => {
+            let itemOptions = res.filter(x => x.categoryId === item.id)
+            if (itemOptions && itemOptions.length > 0) {
+              item.options = itemOptions.map(m => {
+                return { label: m.name, value: m.resourceId, checked: false }
+              })
+            }
+          })
+        })
       })
     },
+    handleCheckAllChange(val, item) {
+      if (val) {
+        item.checkedIds = item.options.map(x => x.value)
+      } else {
+        item.checkedIds = []
+      }
+    },
+
     // 获得菜单树数据方法
     getTreeData() {
       getAllMenusTree().then(res => {
+        this.initTreeDataList(res)
+        console.log('treeDataList.length', this.treeDataList.length)
         const columns = res
         this.treeData = columns
         if (this.treeSelectedNode === null) {
           this.treeSelectedNode = this.treeData[0]
         }
+      })
+    },
+    // 初始化树数据的列表数据，方便以后查询
+    initTreeDataList(treeFormData) {
+      treeFormData.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          item.isLeaf = false
+          this.initTreeDataList(item.children)
+        } else {
+          item.isLeaf = true
+        }
+        this.treeDataList.push(item)
       })
     },
     // 触发搜索树方法
@@ -338,12 +413,19 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.setManuPowerDialogShow = false
       })
     },
 
     // 保存分配的资源
     saveRoleSourcePower() {
-      const reqData = {}
+      let selectedSourceIds = []
+      this.sourceFormdData.forEach(item => {
+        if (item.checkedIds.length > 0) {
+          selectedSourceIds = [...selectedSourceIds, ...item.checkedIds]
+        }
+      })
+      const reqData = qs.stringify({ roleId: this.operatingRoleId, resourceIds: selectedSourceIds.join() })
       setSourcePowerForRole(reqData).then(() => {
         this.$notify({
           title: '成功',
@@ -351,8 +433,15 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.setSourcePowerDialogShow = false
       })
     }
   }
 }
 </script>
+<style scoped>
+.source-split-area {
+  height: 500px;
+  overflow: auto;
+}
+</style>

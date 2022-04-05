@@ -32,7 +32,7 @@
         <!-- <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" /> -->
         <el-table-column label="操作" align="center" width="280px">
           <template slot-scope="{ row }">
-            <el-button type="success" size="mini" @click="handleUpdate(row)">
+            <el-button type="success" size="mini" @click="handleSetRolePower(row)">
               分配角色
             </el-button>
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -49,7 +49,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableAbout.listQuery.page" background :page-size="tableAbout.listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :page-sizes="[15, 30, 50, 100]" :total="tableAbout.listQuery.total">
       </el-pagination>
     </div>
-
+    <!-- 详情编辑对话框 -->
     <el-dialog :title="editDialog.title[editDialog.status]" width="500px" :visible.sync="editDialog.visible">
       <el-form ref="editInfoForm" :model="editDataModel" :rules="editDialog.rules" label-position="right" label-width="60px">
         <el-form-item label="头像" v-if="editDialog.status === 1">
@@ -83,26 +83,31 @@
       </span>
     </el-dialog>
 
-    <!-- <el-dialog title="分配文章到专栏" width="400px" :visible.sync="assignArticlesDialogShow">
-      <div class="filter-container">
-        <el-input v-model="searchTreeText" placeholder="专栏名称" @keyup.enter.native="searchTree">
-          <el-button slot="append" icon="el-icon-search" @click="searchTree" />
-        </el-input>
-      </div>
-      <div class="tree-area">
-        <el-tree ref="columnTree" :filter-node-method="filterNode" :auto-expand-parent="true" :highlight-current="true" :data="treeData" node-key="termTaxonomyId" :expand-on-click-node="false" :props="treeDefaultProps" show-checkbox :check-strictly="true" @current-change="handleTreeNodeChange" />
+    <!-- 分配角色对话框 -->
+    <el-dialog title="分配角色" width="700px" :visible.sync="setRolePowerDialogShow">
+      <div class="role-split-area">
+        <el-checkbox-group v-model="roleSettingInfo.roleIds">
+          <el-row>
+            <el-col :span="8" v-for="item in allRoleList" :key="item.roleId">
+              <el-checkbox :label="item.roleId">{{ item.name }}</el-checkbox>
+            </el-col>
+          </el-row>
+        </el-checkbox-group>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="assignArticlesDialogShow = false">取 消</el-button>
-        <el-button type="primary" @click="confirmArticleToColumns">确 定</el-button>
+        <el-button @click="setRolePowerDialogShow = false">取 消</el-button>
+        <el-button type="primary" @click="saveRolePowerSetting">确 定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getToken } from '@/utils/auth'
-import { getUserList, setUserStatus, addUser, getUserInfoById, updateUserInfoById, deleteUser, uploadUrl } from '@/api/users'
+import { getAllRoles } from '@/api/roles'
+import {
+  getUserList, setUserStatus, getUserRoles, setUserRoles,
+  addUser, getUserInfoById, updateUserInfoById, deleteUser, uploadUrl} from '@/api/users'
 import { emptyChecker } from '@/utils/validate'
 import qs from 'qs'
 import './page.css'
@@ -113,12 +118,7 @@ export default {
     return {
       uploadUrl,
 
-      statusList: [
-        { value: 'DRAFT', label: '草稿' },
-        { value: 'PUBLISHED', label: '发布' }
-      ], // { value: 'DELETED', label: '删除' },
-
-      // 文章列表相关属性
+      // 列表相关属性
       tableAbout: {
         listQuery: {
           page: 1,
@@ -153,20 +153,36 @@ export default {
         }
       },
 
+      // 上传用户头像文件列表
       userImageFileList: [],
-      userImageOptionsShow: false
+      // 上传用户头像选项：下载、删除可见性
+      userImageOptionsShow: false,
+
+      // 分配角色对话框可见性
+      setRolePowerDialogShow: false,
+      // 所有角色选项
+      allRoleList: [],
+      // 分配角色数据对象
+      roleSettingInfo: {
+        userId: null,
+        roleIds: []
+      }
     }
   },
-  // watch: {
-  //   'editDialog.status'(val) {
-  //   }
-  // },
   mounted() {
     // 获取列表
     this.getList()
+    this.getAllRoleList()
   },
   methods: {
     getToken,
+
+    getAllRoleList() {
+      getAllRoles().then(res => {
+        this.allRoleList = res
+      })
+    },
+
     handleUserImageRemove(file, fileList) {
       this.editDataModel.userUrl = ''
     },
@@ -267,6 +283,31 @@ export default {
         this.$refs['editInfoForm'].clearValidate()
       }
       this.editDialog.visible = true
+    },
+
+    // 保存分配角色
+    saveRolePowerSetting() {
+      // setUserRoles()
+      const reqData = qs.stringify({userId: this.roleSettingInfo.userId, roleIds: this.roleSettingInfo.roleIds.join()})
+      setUserRoles(reqData).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '保存成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.setRolePowerDialogShow = false
+      })
+    },
+
+    // 处理分配角色点击事件
+    handleSetRolePower(row) {
+      getUserRoles({ adminId: row.id }).then(res => {
+        console.log('获取用户角色数据', res)
+        this.roleSettingInfo.userId = row.id
+        this.roleSettingInfo.roleIds = res.map(item => item.roleId)
+        this.setRolePowerDialogShow = true
+      })
     },
 
     // 新增按钮点击方法

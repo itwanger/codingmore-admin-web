@@ -9,7 +9,6 @@ import store from './store'
 import './styles/common.css'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' // nprogress样式文件
-import '@icon-park/vue/styles/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false

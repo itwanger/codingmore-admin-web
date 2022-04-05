@@ -18,7 +18,11 @@
           </template>
         </el-table-column>
         <el-table-column label="路由路径" prop="name" align="center" />
-        <el-table-column label="前端图标" prop="icon" align="center" />
+        <el-table-column label="前端图标" prop="icon" align="center">
+          <template slot-scope="{ row }">
+            <more-icon :iconClass="row.icon"></more-icon>
+          </template>
+        </el-table-column>
         <el-table-column label="是否显示" prop="hidden" align="center">
           <template slot-scope="{ row }">
             <el-switch v-model="row.hidden" :active-value="0" :inactive-value="1" @change="handleStatusChange($event, row.menuId)">
@@ -53,7 +57,11 @@
           <el-input v-model="editDataModel.name" autocomplete="off" maxlength="50" placeholder="请输入路由名称"></el-input>
         </el-form-item>
         <el-form-item label="前端图标" prop="icon">
-          <el-input v-model="editDataModel.icon" autocomplete="off" maxlength="20" placeholder="请输入前端图标"></el-input>
+          <el-select v-model="editDataModel.icon">
+            <el-option v-for="item in allIconArray" :key="item" :label="item" :value="item">
+              <more-icon :iconClass="item"></more-icon>{{item}}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否显示" prop="hidden">
           <el-radio-group v-model="editDataModel.hidden">
@@ -74,15 +82,20 @@
 </template>
 
 <script>
-
+import {allIconArray} from '@/components/more-icon/svg-code'
+import MoreIcon from '@/components/more-icon'
 import { getAllMenusTree, addMenu, updateMenu, deleteMenu, setMenuVisible } from '@/api/menus'
 import { emptyChecker } from '@/utils/validate'
 import qs from 'qs'
 
 export default {
   name: 'MenuManagement',
+  components: {
+    MoreIcon
+  },
   data() {
     return {
+      allIconArray,
       // 文章列表相关属性
       tableAbout: {
         tableKey: 0,

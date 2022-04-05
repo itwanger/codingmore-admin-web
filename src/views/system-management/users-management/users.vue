@@ -56,7 +56,7 @@
           <div class="user-image-container" v-if="editDataModel.userUrl" @mouseover="userImageOptionsShow = true" @mouseleave="userImageOptionsShow = false">
             <img :src="editDataModel.userUrl" class="avatar">
             <div v-show="userImageOptionsShow" class="user-image-float-layer">
-              <el-button type="primary" size="mini"><i class="el-icon-download" @click="window.open(editDataModel.userUrl)"></i>下载</el-button>
+              <!-- <el-button type="primary" size="mini"><i class="el-icon-download" @click="window.open(editDataModel.userUrl)"></i>下载</el-button> -->
               <el-button type="danger" size="mini" @click="editDataModel.userUrl=''"><i class="el-icon-refresh"></i>删除</el-button>
             </div>
           </div>

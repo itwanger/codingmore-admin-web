@@ -92,7 +92,7 @@ body {
 }
 
 /* placeholder样式定义 */
-#app input::input-placeholder {
+/* #app input::input-placeholder {
   color: #666;
 }
 
@@ -118,7 +118,7 @@ body {
 
 #app input:focus::-moz-input-placeholder {
   color: #666;
-}
+} */
 
 /* placeholder样式定义结束 */
 

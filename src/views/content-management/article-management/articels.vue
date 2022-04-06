@@ -23,7 +23,7 @@
     </div>
     <div class="table-container">
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
-        <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" />
+        <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
         <el-table-column label="标题" prop="postTitle" >
           <template slot-scope="{row}">

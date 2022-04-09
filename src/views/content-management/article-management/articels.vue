@@ -16,16 +16,22 @@
         <!-- <el-button class="filter-item" type="primary" @click="setArticleColumns">
           分配文章
         </el-button> -->
-        <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+        <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
           新增
-        </el-button> -->
+        </el-button>
       </div>
     </div>
     <div class="table-container">
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
         <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-        <el-table-column label="标题" prop="postTitle" >
+        <el-table-column label="封面图" width="120px" align="center">
+          <template slot-scope="{row}">
+            <el-image v-if="row.attribute && row.attribute.articleCoverUrl" style="width: 90px; height: 60px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
+            <span v-else>无</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="标题" prop="postTitle">
           <template slot-scope="{row}">
             <el-link @click="handleUpdate(row)">{{row.postTitle}}</el-link>
             <!-- <el-button @click="handleUpdate(row)" type="text">{{row.postTitle}}</el-button> -->

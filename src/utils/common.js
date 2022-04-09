@@ -75,3 +75,11 @@ export function handleFormValidError(formValidErrObject) {
     title: '操作失败'
   })
 }
+
+/**
+ * html转纯文本方法
+ * @param {string} html 传入html，返回纯文本
+ */
+export function getTextFormHtml(html) {
+  return html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
+}

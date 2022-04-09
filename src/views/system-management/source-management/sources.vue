@@ -41,7 +41,7 @@
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
-            <el-button v-if="row.status != 'deleted'" size="mini" type="danger" @click="handleDelete(row)">
+            <el-button size="mini" type="danger" @click="handleDelete(row)">
               删除
             </el-button>
           </template>

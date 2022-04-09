@@ -21,7 +21,6 @@
             </el-button>
           </div>
         </div>
-
         <!-- 正文 :html="false"   -->
         <el-form-item prop="postContent">
           <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" @change="handleEditorChange" @imgAdd="handleEditorImgAdd" :toolbars="toolbars" />
@@ -40,14 +39,14 @@
         </el-form-item>
         <!-- 摘要 -->
         <el-form-item label="摘要">
-          <el-input v-model="editDataModel.postExcerpt" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="请输入摘要" maxlength="100" show-word-limit />
+          <el-input v-model="editDataModel.postExcerpt" :rows="3" :autosize="{ minRows: 3, maxRows: 3}" type="textarea" placeholder="请输入摘要" maxlength="100" show-word-limit />
         </el-form-item>
         <el-form-item label="封面图">
           <el-upload class="article-cover" :action="uploadUrl" :headers="{Authorization: getToken()}" :show-file-list="false" :on-success="handleArticleCoverSuccess" :before-upload="beforeArticleCoverUpload">
-            <img v-if="articleCoverUrl" :src="articleCoverUrl" class="article-cover">
+            <el-image v-if="articleCoverUrl" :src="articleCoverUrl" fit="cover" class="article-cover"></el-image>
             <i v-else class="el-icon-plus cover-uploader-icon"></i>
           </el-upload>
-          <div class="red-tip">只能上传jpg/png文件，最佳分辨率为120x80, 且不超过1M</div>
+          <div class="red-tip">只能上传jpg/png文件，最佳宽高比为3:2，展示端文章详情页最大宽度820px, 且不超过2M</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="text-right">
@@ -61,7 +60,7 @@
 import { getToken } from '@/utils/auth'
 import { getArticleById, deleteArticle, createArticle, updateArticle, getTagList, mdEditorUploadImage, uploadUrl } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
-import { createUuid, handleFormValidError } from '@/utils/common'
+import { createUuid, handleFormValidError, getTextFormHtml } from '@/utils/common'
 import qs from 'qs'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
@@ -224,10 +223,16 @@ export default {
           for (let i = matchArr.length - 1; i >= 0; i--) {
             const item = matchArr[i]
             if (item.indexOf(res) > -1) {
+              const currentMaxLength = this.editDataModel.postContent.length
               const imgStrIndex = mdCurrentValue.indexOf(item)
-              const prevChar = mdCurrentValue.substr(imgStrIndex - 1, 1)
+              const prevPrevChar = imgStrIndex - 2 >= 0 ? mdCurrentValue.substr(imgStrIndex - 2, 1) : ''
+              const prevChar = imgStrIndex - 1 >= 0 ? mdCurrentValue.substr(imgStrIndex - 1, 1) : ''
               const nextChar = mdCurrentValue.substr(imgStrIndex + item.length, 1)
-              let repItem = (prevChar == '\n' ? '' : '\n') + item + (nextChar == '\n' ? '' : '\n')
+              const nextNextChar = imgStrIndex + item.length + 1 <= currentMaxLength ? mdCurrentValue.substr(imgStrIndex + item.length + 1, 1) : ''
+              let repItem = (prevPrevChar == '\n' ? '' : '\n') +
+                          (prevChar == '\n' ? '' : '\n') + item +
+                          (nextChar == '\n' ? '' : '\n') +
+                          (nextNextChar == '\n' ? '' : '\n')
               if (repItem.length != item.length) {
                 this.editDataModel.postContent = mdCurrentValue.replace(item, repItem)
               }
@@ -290,6 +295,10 @@ export default {
     pubButtonClick() {
       this.$refs['dataForm'].validate((valid, errorInfo) => {
         if (valid) {
+          if (!this.editDataModel.postExcerpt && this.editDataModel.htmlContent) {
+            let allText = (getTextFormHtml(this.editDataModel.htmlContent)).trim()
+            this.editDataModel.postExcerpt = allText.length > 100 ? allText.substr(0, 97) + '...' : allText
+          }
           this.pubDialogShow = true
         } else {
           // 显示错误信息

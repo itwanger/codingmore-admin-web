@@ -40,8 +40,8 @@
 }
 
 .article-cover{
-  width: 120px;
-  height: 80px;
+  width: 240px;
+  height: 160px;
 }
 
 .article-cover .cover-uploader-icon {
@@ -78,4 +78,12 @@
 /* 添加样式让select显示为100%宽度 */
 .el-select.full-row{
   display: block;
+}
+
+.el-textarea .el-input__count{
+  line-height: 1.2;
+}
+
+.el-tag.el-tag--info {
+  color: #333333;
 }

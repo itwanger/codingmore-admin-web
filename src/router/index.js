@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import mainFrame from '@/layout'
 import articles from '../views/content-management/article-management'
 // import columns from '../views/content-management/column-management'
+import tags from '../views/content-management/tag-management'
 import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
 import roles from '../views/system-management/roles-management'
@@ -46,6 +47,15 @@ export const pageRouters = [
         component: articles,
         meta: {
           title: '文章列表'
+        }
+      },
+      {
+        path: 'tags',
+        name: 'tag-management',
+        icon: 'iconfont-tag-management',
+        component: tags,
+        meta: {
+          title: '标签管理'
         }
       }
       // {

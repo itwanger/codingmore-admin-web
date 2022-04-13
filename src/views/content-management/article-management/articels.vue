@@ -25,9 +25,12 @@
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
         <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-        <el-table-column label="封面图" width="120px" align="center">
+        <el-table-column label="封面图" width="80px" align="center">
           <template slot-scope="{row}">
-            <el-image v-if="row.attribute && row.attribute.articleCoverUrl" style="width: 90px; height: 60px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
+            <el-popover v-if="row.attribute && row.attribute.articleCoverUrl" placement="right" trigger="click">
+              <el-image style="width: 360px; height: 240px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
+              <el-button type="text" slot="reference">查看</el-button>
+            </el-popover>
             <span v-else>无</span>
           </template>
         </el-table-column>

@@ -35,7 +35,8 @@ export const allIconArray = [
   // 阿里矢量图标库的，按需添加即可
   'iconfont-role-management',
   'iconfont-menu-management',
-  'iconfont-source-management'
+  'iconfont-source-management',
+  'iconfont-tag-management'
 ]
 
 export default getSvg

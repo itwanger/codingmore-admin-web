@@ -20,7 +20,7 @@
         <el-table-column label="描述" prop="description" />
         <el-table-column label="用户数" align="center">
           <template slot-scope="{ row }">
-            {{ row.adminCount ? row.adminCount: 0 }}
+            <el-link @click="handleCheckRoleUsers(row)"> {{ row.adminCount ? row.adminCount: 0 }}</el-link>
           </template>
         </el-table-column>
         <el-table-column label="添加时间" prop="createTime" align="center" />
@@ -189,6 +189,11 @@ export default {
     this.getAllSource()
   },
   methods: {
+    // 点击角色统计用户的数字，跳转到用户列表，按照点击的角色id进行查询
+    handleCheckRoleUsers(row) {
+      this.$router.push({ name: `users-management`, params: { rid: row.roleId } })
+    },
+
     // 分配菜单点击事件
     handleSetMenu(row) {
       getRoleOwnedMenuList({ roleId: row.roleId }).then((res) => {

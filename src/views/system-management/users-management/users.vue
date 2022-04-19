@@ -8,6 +8,11 @@
         <el-input v-model="tableAbout.listQuery.userNicename" placeholder="请输入昵称" clearable></el-input>
       </div>
       <div class="flex-fixed-item">
+        <el-select v-model="tableAbout.listQuery.roleId" clearable placeholder="请选择角色">
+          <el-option v-for="item in allRoleList" :label="item.name" :value="item.roleId" :key="item.roleId">{{item.name}}</el-option>
+        </el-select>
+      </div>
+      <div class="flex-fixed-item">
         <el-button class="filter-item" style="margin-left: 14px" type="primary" icon="el-icon-search" @click="search">
           搜索
         </el-button>
@@ -18,7 +23,7 @@
     </div>
     <div class="table-container">
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table">
-        <el-table-column label="编号" prop="id" width="80px" align="center" />
+        <el-table-column label="编号" prop="usersId" width="80px" align="center" />
         <el-table-column label="账号" prop="userLogin" />
         <el-table-column label="昵称" prop="userNicename" />
         <el-table-column label="邮箱" prop="userEmail" align="center" />
@@ -124,6 +129,7 @@ export default {
           page: 1,
           pageSize: 15,
           total: 0,
+          roleId: null,
           userLogin: '',
           userNicename: ''
         },
@@ -170,6 +176,11 @@ export default {
     }
   },
   mounted() {
+    // 角色管理列表中点击用户数一列跳转过来接参数
+    if (this.$route.params && this.$route.params.rid) {
+      this.tableAbout.listQuery.roleId = this.$route.params.rid
+    }
+
     // 获取列表
     this.getList()
     this.getAllRoleList()
@@ -177,6 +188,7 @@ export default {
   methods: {
     getToken,
 
+    // 查询所有角色列表方法
     getAllRoleList() {
       getAllRoles().then(res => {
         this.allRoleList = res
@@ -268,7 +280,7 @@ export default {
     // 更新数据的时候根据返回数据构建编辑数据模型
     getUpdateUserModel(data) {
       this.editDataModel = {
-        id: data.id,
+        id: data.usersId,
         userNicename: data.userNicename,
         userEmail: data.userEmail,
         displayName: data.displayName,
@@ -302,9 +314,9 @@ export default {
 
     // 处理分配角色点击事件
     handleSetRolePower(row) {
-      getUserRoles({ adminId: row.id }).then(res => {
+      getUserRoles({ userId: row.usersId }).then(res => {
         console.log('获取用户角色数据', res)
-        this.roleSettingInfo.userId = row.id
+        this.roleSettingInfo.userId = row.usersId
         this.roleSettingInfo.roleIds = res.map(item => item.roleId)
         this.setRolePowerDialogShow = true
       })
@@ -317,7 +329,7 @@ export default {
     },
     // 修改按钮点击方法
     handleUpdate(row) {
-      getUserInfoById({ usersId: row.id }).then(res => {
+      getUserInfoById({ usersId: row.usersId }).then(res => {
         this.getUpdateUserModel(res)
         this.openEditDialog(1)
       })
@@ -330,7 +342,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUser({ usersId: row.id }).then(() => {
+        deleteUser({ usersId: row.usersId }).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功',

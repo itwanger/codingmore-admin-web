@@ -22,9 +22,10 @@ export default new Vuex.Store({
     refleshUserInfo({
       commit
     }) {
-      getLoginUserInfo().then(res => {
+      return getLoginUserInfo().then(res => {
         console.log('获取登录用户信息成功', res)
         commit('SET_USER_INFO', res)
+        return res.menus
       }).catch(rej => {
         console.log('与服务器通信出现异常，response对象记录', rej)
       })

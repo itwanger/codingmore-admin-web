@@ -44,7 +44,7 @@
         <el-table-column label="作者" prop="userNiceName" width="100px" align="center" />
         <el-table-column label="发布时间" prop="postDate" width="155px" align="center">
           <template slot-scope="{row}">
-            {{row.postDate.substr(0,16)}}
+            {{row.postDate ? row.postDate.substr(0,16) : ''}}
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="postStatus" width="80px" :formatter="statusFilter" align="center">

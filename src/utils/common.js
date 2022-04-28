@@ -83,3 +83,11 @@ export function handleFormValidError(formValidErrObject) {
 export function getTextFormHtml(html) {
   return html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
 }
+
+/**
+ * json对象深拷贝方法
+ * @param {*} obj 要拷贝的json对象
+ */
+export function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}

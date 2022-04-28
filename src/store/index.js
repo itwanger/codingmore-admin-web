@@ -9,12 +9,18 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 定义存储当前登陆用户信息的变量
-    userInfo: null
+    userInfo: null,
+    // 用户可访问的系统路径
+    powerPaths: null
   },
   mutations: {
     // 设置用户信息的方法
     SET_USER_INFO(state, data) {
       state.userInfo = data
+    },
+    // 设置用户可访问业务路径的方法
+    SET_PATHS_ALLOW(state, data) {
+      state.powerPaths = data
     }
   },
   actions: {
@@ -36,6 +42,11 @@ export default new Vuex.Store({
       commit
     }) {
       commit('SET_USER_INFO', null)
+    },
+
+    // 动态获取权限后，设置用户可访问的业务页面路径
+    setUserAllowPaths({ commit }, pathsArr) {
+      commit('SET_PATHS_ALLOW', pathsArr)
     }
   }
 })

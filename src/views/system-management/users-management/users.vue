@@ -209,6 +209,7 @@ export default {
     // 用户头像上传成功回调方法
     handleUserImageUploadSuccess(res, file) {
       this.editDataModel.userUrl = res.result
+      this.userImageOptionsShow = false
     },
 
     // 启用/禁用用户事件处理方法
@@ -280,7 +281,7 @@ export default {
     // 更新数据的时候根据返回数据构建编辑数据模型
     getUpdateUserModel(data) {
       this.editDataModel = {
-        id: data.usersId,
+        usersId: data.usersId,
         userNicename: data.userNicename,
         userEmail: data.userEmail,
         displayName: data.displayName,
@@ -294,6 +295,7 @@ export default {
       if (this.$refs['editInfoForm']) {
         this.$refs['editInfoForm'].clearValidate()
       }
+      this.userImageOptionsShow = false
       this.editDialog.visible = true
     },
 

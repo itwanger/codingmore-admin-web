@@ -386,7 +386,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('refleshUserInfo')
+    // this.$store.dispatch('refleshUserInfo')
     // 编辑的情况
     if (this.$route.query.aid) {
       this.editId = this.$route.query.aid

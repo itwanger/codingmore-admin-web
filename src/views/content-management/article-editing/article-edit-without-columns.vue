@@ -352,7 +352,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('refleshUserInfo')
+    // this.$store.dispatch('refleshUserInfo')
     // 初始化可供选择的标签列表
     this.getSystemTagList().then(() => {
       // 编辑的情况

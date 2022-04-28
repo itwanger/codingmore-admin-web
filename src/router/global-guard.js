@@ -11,12 +11,12 @@ import {
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' // nprogress样式文件
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   console.log('router.beforeEach参数：', 'to=', to, 'from=', from)
   // 开启进度条
   NProgress.start()
 
-  const tokenValue = getToken()
+  /* const tokenValue = getToken()
   if (tokenValue) {
     // 登陆或者刷新页面时候的情况，已经有token了，但是vuex中没有用户信息，需要异步请求，并加入有权限的菜单到router中
     if (!store.state.userInfo) {
@@ -55,22 +55,19 @@ router.beforeEach(async (to, from, next) => {
           // 将所有菜单加入路由
           router.addRoutes(userMenus)
           // 将所有可访问路径加入vuex
-          store.dispatch('setUserAllowPaths', allowPaths)
-          // 判断当前要跳转路径是否在允许访问范围之内
-          let allowTarget = allowPaths.find(x => x === to.path)
-          // 如果当前要跳转路径在允许范围之内，直接跳转
-          if (allowTarget) {
-            console.log('next:::0')
-            // next()
+          store.dispatch('setUserPowers', allowPaths, userMenus)
+          let allowTarget = store.state.powerPaths.find(x => x === to.path)
+          console.log('next:::0 new')
+          if (!allowTarget || to.path === '/login') {
+            // 必然要跳转到有权限的第一个菜单
+            next({ path: store.state.powerPaths[0], replace: true })
           } else {
-            // 如果当前要跳转路径不在允许范围之内，取第一条允许访问的页面路径进行跳转
-            console.log('next:::1')
-            // next({ path: allowPaths[0], replace: true })
+            next()
           }
         } else {
           // 没有任何系统页面的权限
           console.log('next:::2')
-          // next({ path: '/error/no-any-power', replace: true })
+          next({ path: '/error/no-any-power', replace: true })
         }
       })
     } else {
@@ -83,22 +80,20 @@ router.beforeEach(async (to, from, next) => {
       } else {
         // 这个一定要加，没有next()页面不会跳转的。这部分还不清楚的去翻一下官网就明白了
         console.log('next:::4')
-        // next()
+        next()
       }
     }
   } else {
     // 当没有token的时候，直接跳转登录页
     if (to.path !== '/login') {
       console.log('next:::5')
-      next({
-        path: '/login'
-      })
+      next({ path: '/login' })
     } else {
       console.log('next:::6')
       next()
     }
-  }
-  // next()
+  } */
+  next()
 })
 
 router.afterEach((to, from) => {

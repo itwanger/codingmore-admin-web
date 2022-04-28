@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 import {
   getLoginUserInfo
 } from '../api/users'
+import {
+  systemRouters
+} from '../router'
 
 Vue.use(Vuex)
 
@@ -11,7 +14,11 @@ export default new Vuex.Store({
     // 定义存储当前登陆用户信息的变量
     userInfo: null,
     // 用户可访问的系统路径
-    powerPaths: null
+    powerPaths: [],
+    // 用户可访问的业务菜单列表
+    userMenus: [],
+    // 系统本身可访问路径
+    sysPaths: []
   },
   mutations: {
     // 设置用户信息的方法
@@ -21,6 +28,12 @@ export default new Vuex.Store({
     // 设置用户可访问业务路径的方法
     SET_PATHS_ALLOW(state, data) {
       state.powerPaths = data
+      // 加入系统菜单允许访问的路径
+      const sysPaths = systemRouters.filter(x => x.name != 'all').map(x => x.path)
+      state.sysPaths = sysPaths
+    },
+    SET_USER_MENUS(state, data) {
+      state.userMenus = data
     }
   },
   actions: {
@@ -45,8 +58,11 @@ export default new Vuex.Store({
     },
 
     // 动态获取权限后，设置用户可访问的业务页面路径
-    setUserAllowPaths({ commit }, pathsArr) {
+    setUserPowers({
+      commit
+    }, pathsArr, menusArr) {
       commit('SET_PATHS_ALLOW', pathsArr)
+      commit('SET_USER_MENUS', menusArr)
     }
   }
 })

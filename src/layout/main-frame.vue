@@ -3,20 +3,13 @@
     <!-- 左侧菜单区域 -->
     <!-- <el-aside :width="menuCollapsed ? 'auto': '201px'"> -->
     <el-aside width="auto">
-      <!-- <div class="logo text-center">
-        <img src="../assets/logo-main.jpg" />
-      </div> -->
       <el-menu :collapse="menuCollapsed" :default-active="$route.path" class="custom-nav" router>
         <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
           <template slot="title">
-            <!-- <i :class="item.icon"></i> -->
-            <!-- <bookmark theme="outline" size="24" /> -->
             <more-icon :iconClass="item.icon"></more-icon>
             <span>{{item.meta.title}}</span>
           </template>
           <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
-            <!-- <i :class="subitem.icon"></i> -->
-            <!-- <book-mark theme="outline" size="25" fill="#000"/> -->
             <more-icon :iconClass="subitem.icon"></more-icon>
             <span>{{subitem.meta.title}}</span>
           </el-menu-item>
@@ -62,7 +55,7 @@
 </template>
 
 <script>
-import { pageRouters } from '../router'
+import pageRouters from '../router/pages'
 import { userLogout } from '../api/users'
 import { removeToken } from '../utils/auth'
 import MoreIcon from '../components/more-icon'
@@ -78,6 +71,9 @@ export default {
     currentUserInfo() {
       return this.$store.state.userInfo
     }
+    // pageRouters() {
+    //   return this.$store.state.userMenus
+    // }
   },
   data() {
     return {
@@ -141,7 +137,7 @@ export default {
   },
   mounted() {
     // 调用vuex的actions的refleshUserInfo方法，获取当前登陆用户信息
-    this.$store.dispatch('refleshUserInfo')
+    // this.$store.dispatch('refleshUserInfo')
   }
 }
 </script>

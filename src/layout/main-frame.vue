@@ -136,8 +136,9 @@ export default {
     }
   },
   mounted() {
+    console.log('main-frame mounted')
     // 调用vuex的actions的refleshUserInfo方法，获取当前登陆用户信息
-    // this.$store.dispatch('refleshUserInfo')
+    this.$store.dispatch('refleshUserInfo')
   }
 }
 </script>

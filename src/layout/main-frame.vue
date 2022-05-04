@@ -3,15 +3,28 @@
     <!-- 左侧菜单区域 -->
     <!-- <el-aside :width="menuCollapsed ? 'auto': '201px'"> -->
     <el-aside width="auto">
-      <el-menu :collapse="menuCollapsed" :default-active="$route.path" class="custom-nav" router>
-        <el-submenu v-for="item in pageRouters" :key="item.path" :index="item.path">
+      <el-menu
+        :collapse="menuCollapsed"
+        :default-active="$route.path"
+        class="custom-nav"
+        router
+      >
+        <el-submenu
+          v-for="item in pageRouters"
+          :key="item.path"
+          :index="item.path"
+        >
           <template slot="title">
             <more-icon :iconClass="item.icon"></more-icon>
-            <span>{{item.meta.title}}</span>
+            <span>{{ item.meta.title }}</span>
           </template>
-          <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
+          <el-menu-item
+            v-for="subitem in item.children"
+            :key="subitem.path"
+            :index="item.path + '/' + subitem.path"
+          >
             <more-icon :iconClass="subitem.icon"></more-icon>
-            <span>{{subitem.meta.title}}</span>
+            <span>{{ subitem.meta.title }}</span>
           </el-menu-item>
         </el-submenu>
       </el-menu>
@@ -26,18 +39,31 @@
         <!-- 面包屑 -->
         <div class="bread-container">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item v-for="item in currentMatchedRoutes" :key="item.path" :to="{ path: item.path }">{{item.meta.title}}</el-breadcrumb-item>
+            <el-breadcrumb-item
+              v-for="item in currentMatchedRoutes"
+              :key="item.path"
+              :to="{ path: item.path }"
+              >{{ item.meta.title }}</el-breadcrumb-item
+            >
           </el-breadcrumb>
         </div>
         <!-- 用户头像 -->
         <div class="user-area">
           <el-dropdown trigger="click" @command="handleCommand">
             <span>
-              <el-image :src="currentUserInfo && currentUserInfo.userDetail.userUrl ? currentUserInfo.userDetail.userUrl: defaultUserImage" class="user-image" slot="reference">
+              <el-image
+                :src="
+                  currentUserInfo && currentUserInfo.userDetail.userUrl
+                    ? currentUserInfo.userDetail.userUrl
+                    : defaultUserImage
+                "
+                class="user-image"
+                slot="reference"
+              >
               </el-image>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>修改密码</el-dropdown-item>
+              <el-dropdown-item command="m">修改密码</el-dropdown-item>
               <el-dropdown-item divided command="q">退出登陆</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -48,21 +74,69 @@
         <router-view :key="$route.path + ($route.query.aid || '')" />
       </el-main>
     </el-container>
-    <el-dialog title="修改密码" :visible="modifyPasswordVisible">
-      <el-form v-model="modifyPasswordForm"></el-form>
+    <el-dialog
+      title="修改密码"
+      :visible="modifyPasswordVisible"
+      :close-on-click-modal="false"
+      :show-close="false"
+      width="500px"
+    >
+      <el-form
+        ref="editForm"
+        :model="modifyPasswordForm"
+        :rules="modifyPasswordForm.rules"
+        label-position="right"
+        label-width="100px"
+      >
+        <el-form-item label="原密码" prop="oldPassword">
+          <el-input
+            v-model="modifyPasswordForm.oldPassword"
+            autocomplete="off"
+            maxlength="50"
+            placeholder="请输入原密码"
+            show-password
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input
+            v-model="modifyPasswordForm.newPassword"
+            autocomplete="off"
+            maxlength="50"
+            placeholder="请输入新密码"
+            show-password
+          ></el-input>
+          <password-meter :password="modifyPasswordForm.newPassword" />
+        </el-form-item>
+        <el-form-item label="确认新密码" prop="confirmPassword">
+          <el-input
+            v-model="modifyPasswordForm.confirmPassword"
+            autocomplete="off"
+            maxlength="50"
+            placeholder="请再次输入新密码"
+            show-password
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="modifyPasswordVisible = false">取 消</el-button>
+        <el-button type="primary" @click="savePassword">确 定</el-button>
+      </span>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
-import pageRouters from '../router/pages'
-import { userLogout } from '../api/users'
+import { pageRouters } from '../router'
+import { userLogout, modifyPassword } from '../api/users'
 import { removeToken } from '../utils/auth'
 import MoreIcon from '../components/more-icon'
+import { emptyChecker } from '@/utils/validate'
+import passwordMeter from 'vue-simple-password-meter'
+import qs from 'qs'
 
 export default {
   name: 'mainFrame',
-  components: { MoreIcon },
+  components: { MoreIcon, passwordMeter },
   computed: {
     // 当前面包屑使用数据
     currentMatchedRoutes() {
@@ -71,9 +145,6 @@ export default {
     currentUserInfo() {
       return this.$store.state.userInfo
     }
-    // pageRouters() {
-    //   return this.$store.state.userMenus
-    // }
   },
   data() {
     return {
@@ -94,7 +165,37 @@ export default {
       // 修改密码表单
       modifyPasswordForm: {
         newPassword: '',
-        oldPassword: ''
+        oldPassword: '',
+        confirmPassword: '',
+        rules: {
+          oldPassword: [
+            {
+              required: true,
+              validator: emptyChecker,
+              message: '原密码不能为空',
+              trigger: 'blur'
+            },
+            { validator: this.validOldPassword, trigger: 'blur' }
+          ],
+          newPassword: [
+            {
+              required: true,
+              validator: emptyChecker,
+              message: '新密码不能为空',
+              trigger: 'blur'
+            },
+            { validator: this.validNewPassword, trigger: 'blur' }
+          ],
+          confirmPassword: [
+            {
+              required: true,
+              validator: emptyChecker,
+              message: '确认新密码不能为空',
+              trigger: 'blur'
+            },
+            { validator: this.validConfirmPassword, trigger: 'blur' }
+          ]
+        }
       }
     }
   },
@@ -116,6 +217,15 @@ export default {
     handleCommand(command) {
       if (command == 'q') {
         this.logoutSystemClick()
+      } else if (command == 'm') {
+        this.modifyPasswordForm.oldPassword =
+          this.modifyPasswordForm.newPassword =
+          this.modifyPasswordForm.confirmPassword =
+            ''
+        if (this.$refs['editForm']) {
+          this.$refs['editForm'].clearValidate()
+        }
+        this.modifyPasswordVisible = true
       }
     },
 
@@ -133,6 +243,84 @@ export default {
 
     writeArticleClick() {
       this.$router.push('/content/article-editing')
+    },
+
+    // 自定义验证老密码规则
+    validOldPassword(rule, value, callback) {
+      if (
+        this.modifyPasswordForm.oldPassword &&
+        this.modifyPasswordForm.newPassword &&
+        this.modifyPasswordForm.newPassword ===
+          this.modifyPasswordForm.oldPassword
+      ) {
+        callback(new Error('新密码不能跟老密码相同'))
+      }
+      callback()
+    },
+
+    // 自定义验证新密码规则
+    validNewPassword(rule, value, callback) {
+      const errArr = []
+      if (
+        this.modifyPasswordForm.oldPassword &&
+        this.modifyPasswordForm.newPassword &&
+        this.modifyPasswordForm.newPassword ===
+          this.modifyPasswordForm.oldPassword
+      ) {
+        errArr.push('新密码不能跟老密码相同')
+      }
+      if (
+        this.modifyPasswordForm.newPassword &&
+        this.modifyPasswordForm.confirmPassword &&
+        this.modifyPasswordForm.newPassword !==
+          this.modifyPasswordForm.confirmPassword
+      ) {
+        errArr.push('两次输入的新密码不一致')
+      }
+
+      if (errArr.length > 0) {
+        callback(new Error(errArr.join('，')))
+      }
+      callback()
+    },
+
+    // 自定义验证确认密码规则
+    validConfirmPassword(rule, value, callback) {
+      if (
+        this.modifyPasswordForm.newPassword &&
+        this.modifyPasswordForm.confirmPassword &&
+        this.modifyPasswordForm.newPassword !==
+          this.modifyPasswordForm.confirmPassword
+      ) {
+        callback(new Error('两次输入的新密码不一致'))
+      }
+      callback()
+    },
+
+    savePassword() {
+      this.$refs['editForm'].validate((valid) => {
+        if (valid) {
+          const reqData = qs.stringify({
+            oldPassword: this.modifyPasswordForm.oldPassword,
+            newPassword: this.modifyPasswordForm.newPassword
+          })
+          modifyPassword(reqData)
+            .then(() => {
+              this.$notify({
+                title: '成功',
+                message: '修改密码成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+            .then(() => {
+              this.logoutSystemClick()
+            })
+            .then(() => {
+              this.$message.info('修改密码成功，请重新登陆')
+            })
+        }
+      })
     }
   },
   mounted() {
@@ -247,5 +435,35 @@ export default {
 .el-main {
   background-color: #fff;
   color: #333;
+}
+
+.po-password-strength-bar {
+  border-radius: 2px;
+
+  transition: all 0.2s linear;
+
+  height: 5px;
+
+  margin-top: 8px;
+}
+
+.po-password-strength-bar.risky {
+  background-color: #f95e68;
+}
+
+.po-password-strength-bar.guessable {
+  background-color: #fb964d;
+}
+
+.po-password-strength-bar.weak {
+  background-color: #fdd244;
+}
+
+.po-password-strength-bar.safe {
+  background-color: #b0dc53;
+}
+
+.po-password-strength-bar.secure {
+  background-color: #35cc62;
 }
 </style>

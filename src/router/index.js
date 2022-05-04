@@ -67,7 +67,7 @@ export const systemRouters = [{
 }
 ]
 
-const pageRouters = [
+export const pageRouters = [
   {
     path: '/content',
     redirect: '/content/articles',

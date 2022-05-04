@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-import router from './index'
+import router, { pageRouters } from './index'
 import store from '../store'
-import pageRouters from './pages'
 import {
   deepCopy
 } from '../utils/common'

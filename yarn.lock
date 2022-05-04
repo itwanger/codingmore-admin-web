@@ -7534,6 +7534,11 @@ vue-router@^3.0.1:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.3.tgz#041048053e336829d05dafacf6a8fb669a2e7999"
   integrity sha512-FUlILrW3DGitS2h+Xaw8aRNvGTwtuaxrRkNSHWTizOfLUie7wuYwezeZ50iflRn8YPV5kxmU2LQuu3nM/b3Zsg==
 
+vue-simple-password-meter@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/vue-simple-password-meter/-/vue-simple-password-meter-0.1.0.tgz#bf6ab33739fb3cfc508140ba7c2ca521cca1d2c8"
+  integrity sha512-5ZlI4AebAhoETMjUzdTZd8FcpUB0ecWGZ2cBggydJc70EBqEUPye6LI56anDlS+KSHQEAv7r9PdvQk8Ndt7WjQ==
+
 vue-style-loader@^3.0.0, vue-style-loader@^3.0.1:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-3.1.2.tgz#6b66ad34998fc9520c2f1e4d5fa4091641c1597a"

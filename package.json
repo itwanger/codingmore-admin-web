@@ -19,6 +19,7 @@
     "nprogress": "^0.2.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
+    "vue-simple-password-meter": "^0.1.0",
     "vuex": "^3.6.2"
   },
   "devDependencies": {

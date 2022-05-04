@@ -9,25 +9,27 @@ import router from './router'
 import store from './store'
 import './router/global-guard'
 import './styles/common.css'
+import Router from 'vue-router'
 // import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' // nprogress样式文件
-
+Vue.use(Router)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 
-// router.beforeEach((to, from, next) => {
-//   console.log('router.beforeEach参数：', 'to=', to, 'from=', from)
-//   console.log('router=', router)
-//   // 开启进度条
-//   NProgress.start()
-//   next()
-// })
+const originalPush = Router.prototype.push
+const originalReplace = Router.prototype.replace
 
-// router.afterEach((to, from) => {
-//   console.log('afterEach to=', to, 'from=', from)
-//   // 关闭进度条
-//   NProgress.done()
-// })
+// push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) { return originalPush.call(this, location, onResolve, onReject) }
+  return originalPush.call(this, location).catch(err => err)
+}
+
+// replace
+Router.prototype.replace = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) { return originalReplace.call(this, location, onResolve, onReject) }
+  return originalReplace.call(this, location).catch(err => err)
+}
 
 /* eslint-disable no-new */
 new Vue({

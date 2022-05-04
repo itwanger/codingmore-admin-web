@@ -3,26 +3,13 @@
     <!-- 左侧菜单区域 -->
     <!-- <el-aside :width="menuCollapsed ? 'auto': '201px'"> -->
     <el-aside width="auto">
-      <el-menu
-        :collapse="menuCollapsed"
-        :default-active="$route.path"
-        class="custom-nav"
-        router
-      >
-        <el-submenu
-          v-for="item in pageRouters"
-          :key="item.path"
-          :index="item.path"
-        >
+      <el-menu :collapse="menuCollapsed" :default-active="$route.path" class="custom-nav" router>
+        <el-submenu v-for="item in pageShowRouters" :key="item.path" :index="item.path">
           <template slot="title">
             <more-icon :iconClass="item.icon"></more-icon>
             <span>{{ item.meta.title }}</span>
           </template>
-          <el-menu-item
-            v-for="subitem in item.children"
-            :key="subitem.path"
-            :index="item.path + '/' + subitem.path"
-          >
+          <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="item.path + '/' + subitem.path">
             <more-icon :iconClass="subitem.icon"></more-icon>
             <span>{{ subitem.meta.title }}</span>
           </el-menu-item>
@@ -39,27 +26,18 @@
         <!-- 面包屑 -->
         <div class="bread-container">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item
-              v-for="item in currentMatchedRoutes"
-              :key="item.path"
-              :to="{ path: item.path }"
-              >{{ item.meta.title }}</el-breadcrumb-item
-            >
+            <el-breadcrumb-item v-for="item in currentMatchedRoutes" :key="item.path" :to="{ path: item.path }">{{ item.meta.title }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         <!-- 用户头像 -->
         <div class="user-area">
           <el-dropdown trigger="click" @command="handleCommand">
             <span>
-              <el-image
-                :src="
+              <el-image :src="
                   currentUserInfo && currentUserInfo.userDetail.userUrl
                     ? currentUserInfo.userDetail.userUrl
                     : defaultUserImage
-                "
-                class="user-image"
-                slot="reference"
-              >
+                " class="user-image" slot="reference">
               </el-image>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -74,47 +52,17 @@
         <router-view :key="$route.path + ($route.query.aid || '')" />
       </el-main>
     </el-container>
-    <el-dialog
-      title="修改密码"
-      :visible="modifyPasswordVisible"
-      :close-on-click-modal="false"
-      :show-close="false"
-      width="500px"
-    >
-      <el-form
-        ref="editForm"
-        :model="modifyPasswordForm"
-        :rules="modifyPasswordForm.rules"
-        label-position="right"
-        label-width="100px"
-      >
+    <el-dialog title="修改密码" :visible="modifyPasswordVisible" :close-on-click-modal="false" :show-close="false" width="500px">
+      <el-form ref="editForm" :model="modifyPasswordForm" :rules="modifyPasswordForm.rules" label-position="right" label-width="100px">
         <el-form-item label="原密码" prop="oldPassword">
-          <el-input
-            v-model="modifyPasswordForm.oldPassword"
-            autocomplete="off"
-            maxlength="50"
-            placeholder="请输入原密码"
-            show-password
-          ></el-input>
+          <el-input v-model="modifyPasswordForm.oldPassword" autocomplete="off" maxlength="50" placeholder="请输入原密码" show-password></el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input
-            v-model="modifyPasswordForm.newPassword"
-            autocomplete="off"
-            maxlength="50"
-            placeholder="请输入新密码"
-            show-password
-          ></el-input>
+          <el-input v-model="modifyPasswordForm.newPassword" autocomplete="off" maxlength="50" placeholder="请输入新密码" show-password></el-input>
           <password-meter :password="modifyPasswordForm.newPassword" />
         </el-form-item>
         <el-form-item label="确认新密码" prop="confirmPassword">
-          <el-input
-            v-model="modifyPasswordForm.confirmPassword"
-            autocomplete="off"
-            maxlength="50"
-            placeholder="请再次输入新密码"
-            show-password
-          ></el-input>
+          <el-input v-model="modifyPasswordForm.confirmPassword" autocomplete="off" maxlength="50" placeholder="请再次输入新密码" show-password></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -132,6 +80,7 @@ import { removeToken } from '../utils/auth'
 import MoreIcon from '../components/more-icon'
 import { emptyChecker } from '@/utils/validate'
 import passwordMeter from 'vue-simple-password-meter'
+import { deepCopy } from '../utils/common'
 import qs from 'qs'
 
 export default {
@@ -155,6 +104,9 @@ export default {
 
       // 在router中定义的，要显示在左侧导航的路由数组
       pageRouters,
+
+      // 在页面上显示的菜单
+      pageShowRouters: [],
 
       // 默认头像路径
       defaultUserImage: require('@/assets/default_user_image.jpg'),
@@ -221,7 +173,7 @@ export default {
         this.modifyPasswordForm.oldPassword =
           this.modifyPasswordForm.newPassword =
           this.modifyPasswordForm.confirmPassword =
-            ''
+          ''
         if (this.$refs['editForm']) {
           this.$refs['editForm'].clearValidate()
         }
@@ -251,7 +203,7 @@ export default {
         this.modifyPasswordForm.oldPassword &&
         this.modifyPasswordForm.newPassword &&
         this.modifyPasswordForm.newPassword ===
-          this.modifyPasswordForm.oldPassword
+        this.modifyPasswordForm.oldPassword
       ) {
         callback(new Error('新密码不能跟老密码相同'))
       }
@@ -265,7 +217,7 @@ export default {
         this.modifyPasswordForm.oldPassword &&
         this.modifyPasswordForm.newPassword &&
         this.modifyPasswordForm.newPassword ===
-          this.modifyPasswordForm.oldPassword
+        this.modifyPasswordForm.oldPassword
       ) {
         errArr.push('新密码不能跟老密码相同')
       }
@@ -273,7 +225,7 @@ export default {
         this.modifyPasswordForm.newPassword &&
         this.modifyPasswordForm.confirmPassword &&
         this.modifyPasswordForm.newPassword !==
-          this.modifyPasswordForm.confirmPassword
+        this.modifyPasswordForm.confirmPassword
       ) {
         errArr.push('两次输入的新密码不一致')
       }
@@ -290,7 +242,7 @@ export default {
         this.modifyPasswordForm.newPassword &&
         this.modifyPasswordForm.confirmPassword &&
         this.modifyPasswordForm.newPassword !==
-          this.modifyPasswordForm.confirmPassword
+        this.modifyPasswordForm.confirmPassword
       ) {
         callback(new Error('两次输入的新密码不一致'))
       }
@@ -323,10 +275,23 @@ export default {
       })
     }
   },
+  beforeMount() {
+    const userMenus = this.$store.state.userMenus ? this.$store.state.userMenus : []
+    if (userMenus.length > 0) {
+      this.pageRouters.forEach(lv1 => {
+        let lv1Copy = deepCopy(lv1)
+        let lv2Arr = lv1.children.filter(item => userMenus.indexOf(item.name) > -1)
+        lv1Copy.children = lv2Arr
+        if (lv1Copy.children.length > 0) {
+          this.pageShowRouters.push(lv1Copy)
+        }
+      })
+    }
+  },
   mounted() {
     console.log('main-frame mounted')
     // 调用vuex的actions的refleshUserInfo方法，获取当前登陆用户信息
-    this.$store.dispatch('refleshUserInfo')
+    // this.$store.dispatch('refleshUserInfo')
   }
 }
 </script>

@@ -66,7 +66,7 @@ export default {
         // 先保存token到cookie
         setToken(`${res.tokenHead}${res.token}`)
         // 之后跳转页面到首页
-        this.$router.push('/content/articles')
+        this.$router.push('/')
       })
     },
 

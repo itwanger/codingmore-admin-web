@@ -17,7 +17,7 @@
             {{ (row.level + 1) + '级'}}
           </template>
         </el-table-column>
-        <el-table-column label="路由路径" prop="name" align="center" />
+        <el-table-column label="路由名称" prop="name" align="center" />
         <el-table-column label="前端图标" prop="icon" align="center">
           <template slot-scope="{ row }">
             <more-icon :iconClass="row.icon"></more-icon>
@@ -53,7 +53,7 @@
             <el-option v-for="item in parentMenuList" :label="item.label" :value="item.value" :key="item.value">{{item.label}}</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="路由路径" prop="name">
+        <el-form-item label="路由名称" prop="name">
           <el-input v-model="editDataModel.name" autocomplete="off" maxlength="50" placeholder="请输入路由名称"></el-input>
         </el-form-item>
         <el-form-item label="前端图标" prop="icon">
@@ -106,7 +106,7 @@ export default {
       // 页面用来编辑的数据模型
       editDataModel: {
         title: '', // 菜单名称
-        name: '', // 路由路径
+        name: '', // 路由名称
         icon: '', // 前端图标
         hidden: 0, // 是否显示，0-显示，1-隐藏
         level: 0, // 菜单级数
@@ -179,7 +179,7 @@ export default {
     getAddCategoryModel() {
       this.editDataModel = {
         title: '', // 菜单名称
-        name: '', // 路由路径
+        name: '', // 路由名称
         icon: '', // 前端图标
         hidden: 0, // 是否显示，0-显示，1-隐藏
         level: 0, // 菜单级数

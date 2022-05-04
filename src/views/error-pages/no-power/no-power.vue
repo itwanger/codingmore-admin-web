@@ -8,8 +8,8 @@ export default {
   name: 'NoPower',
   data() {
     return {
-      picUrl: require('@/assets/404.png'),
-      discriptionText: '对不起，您访问的页面不存在'
+      picUrl: require('@/assets/no-power.png'),
+      discriptionText: '您无权限访问当前页面，请联系系统管理员'
     }
   },
   methods: {

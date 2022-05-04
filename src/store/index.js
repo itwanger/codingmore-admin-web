@@ -13,12 +13,8 @@ export default new Vuex.Store({
   state: {
     // 定义存储当前登陆用户信息的变量
     userInfo: null,
-    // 用户可访问的系统路径
-    powerPaths: [],
-    // 用户可访问的业务菜单列表
-    userMenus: [],
-    // 系统本身可访问路径
-    sysPaths: []
+    // 用户可访问的业务菜单名称列表
+    userMenus: []
   },
   mutations: {
     // 设置用户信息的方法
@@ -60,8 +56,7 @@ export default new Vuex.Store({
     // 动态获取权限后，设置用户可访问的业务页面路径
     setUserPowers({
       commit
-    }, pathsArr, menusArr) {
-      commit('SET_PATHS_ALLOW', pathsArr)
+    }, menusArr) {
       commit('SET_USER_MENUS', menusArr)
     }
   }

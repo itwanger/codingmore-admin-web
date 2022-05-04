@@ -3,13 +3,10 @@ import Router from 'vue-router'
 import page404 from '../views/error-pages/404'
 import page500 from '../views/error-pages/500'
 import pageNoAnyPower from '../views/error-pages/no-any-power'
+import pageNoPower from '../views/error-pages/no-power'
 import pageLogin from '../views/login'
-// import mainFrame from '@/layout'
-// import pageRouters from './pages'
-
 import mainFrame from '@/layout'
 import articles from '../views/content-management/article-management'
-// import columns from '../views/content-management/column-management'
 import tags from '../views/content-management/tag-management'
 import articleEdit from '../views/content-management/article-editing'
 import users from '../views/system-management/users-management'
@@ -24,47 +21,43 @@ Vue.use(Router)
 // 定义路由数组，暂时前端写死，之后加入权限管理之后，读取权限之后要进行过滤
 
 // 不展示在菜单栏上，但是系统要使用到的数组
-export const systemRouters = [{
-  path: '/error/404',
-  name: 'error-page404',
-  component: page404
-},
-{
-  path: '/error/500',
-  name: 'error-page500',
-  component: page500
-},
-{
-  path: '/error/no-any-power',
-  name: 'error-no-any-power',
-  component: pageNoAnyPower
-},
-{
-  path: '/login',
-  name: 'login',
-  component: pageLogin
-},
+export const systemRouters = [
+  {
+    path: '/error/404',
+    name: 'error-page404',
+    component: page404
+  },
+  {
+    path: '/error/500',
+    name: 'error-page500',
+    component: page500
+  },
+  {
+    path: '/error/no-power',
+    name: 'error-no-power',
+    component: pageNoPower
+  },
+  {
+    path: '/error/no-any-power',
+    name: 'error-no-any-power',
+    component: pageNoAnyPower
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: pageLogin
+  },
   // {
   //   path: '/content/article-editing',
   //   name: 'article-editing',
   //   component: articleEdit
   // },
-{
-  path: '/main',
-  name: 'empty',
-  component: mainFrame
-},
-{
-  path: '/',
-  name: 'root',
-  redirect: '/content/articles'
-  // component: mainFrame
-},
-{
-  path: '*',
-  name: 'all',
-  redirect: '/error/404'
-}
+  {
+    path: '/',
+    name: 'root',
+    // redirect: '/content/articles'
+    component: mainFrame
+  }
 ]
 
 export const pageRouters = [
@@ -155,7 +148,7 @@ export const pageRouters = [
       },
       {
         path: 'menus',
-        name: 'menus',
+        name: 'menus-management',
         component: menus,
         icon: 'iconfont-menu-management',
         meta: {
@@ -164,7 +157,7 @@ export const pageRouters = [
       },
       {
         path: 'sources',
-        name: 'sources',
+        name: 'sources-management',
         component: sources,
         icon: 'iconfont-source-management',
         meta: {
@@ -191,12 +184,6 @@ export const pageRouters = [
     ]
   }
 ]
-
-const originalPush = Router.prototype.push
-Router.prototype.push = function push(location, onResolve, onReject) {
-  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
-  return originalPush.call(this, location).catch(err => err)
-}
 
 export default new Router({
   routes: [...pageRouters, ...systemRouters]

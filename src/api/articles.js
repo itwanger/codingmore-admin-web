@@ -73,4 +73,22 @@ export function bindArticleToColumns(data) {
   })
 }
 
+// 文章置顶方法
+export function setArticleOnTop(data) {
+  return request({
+    url: '/posts/setOnTop',
+    method: 'post',
+    data
+  })
+}
+
+// 取消文章置顶方法
+export function cancelArticleOnTop(data) {
+  return request({
+    url: '/posts/cancelOnTop',
+    method: 'post',
+    data
+  })
+}
+
 export const uploadUrl = process.env.VUE_APP_BASE_API + '/ossController/upload'

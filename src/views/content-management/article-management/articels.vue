@@ -55,8 +55,11 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" /> -->
-        <el-table-column label="操作" align="center" width="180px">
+        <el-table-column label="操作" align="center" width="260px">
           <template slot-scope="{row,$index}">
+            <el-button type="primary" size="mini" @click="handleSettingOnTop(row)">
+              {{ row.menuOrder === 0 ? '置顶' : '取消置顶'}}
+            </el-button>
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
@@ -90,9 +93,10 @@
 </template>
 
 <script>
-import { getArticlePagedList, deleteArticle, bindArticleToColumns } from '@/api/articles'
+import { getArticlePagedList, deleteArticle, bindArticleToColumns, setArticleOnTop, cancelArticleOnTop } from '@/api/articles'
 import { loopExpendTree } from '@/utils/common'
 import { getAllColumns } from '@/api/columns'
+import qs from 'qs'
 
 export default {
   name: 'ArticlesManagement',
@@ -106,7 +110,7 @@ export default {
           page: 1,
           pageSize: 15,
           total: 0,
-          orderBy: 'post_modified',
+          orderBy: 'menu_order,post_modified',
           asc: false,
           postTitleKeyword: '',
           postStatus: ''
@@ -333,6 +337,21 @@ export default {
           })
           this.getList()
         })
+      })
+    },
+
+    // 置顶/取消置顶方法
+    handleSettingOnTop(row) {
+      const reqFunc = row.menuOrder === 1 ? cancelArticleOnTop : setArticleOnTop
+      let reqData = qs.stringify({ postsId: row.postsId })
+      reqFunc(reqData).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '操作成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.getList()
       })
     },
 

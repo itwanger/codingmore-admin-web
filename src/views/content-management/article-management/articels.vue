@@ -36,8 +36,8 @@
         </el-table-column>
         <el-table-column label="标题" prop="postTitle">
           <template slot-scope="{row}">
+            <img :src="onTopImageSrc" class="icon-ontop" v-if="row.menuOrder !== 0" />
             <el-link @click="handleUpdate(row)">{{row.postTitle}}</el-link>
-            <!-- <el-button @click="handleUpdate(row)" type="text">{{row.postTitle}}</el-button> -->
           </template>
         </el-table-column>
         <!-- <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip /> -->
@@ -146,7 +146,10 @@ export default {
         label: 'name'
       },
       // 分配文章到专栏对话框的可见度
-      assignArticlesDialogShow: false
+      assignArticlesDialogShow: false,
+
+      // 置顶图标路径
+      onTopImageSrc: require('@/assets/icon-ontop.png')
     }
   },
   mounted() {
@@ -318,7 +321,8 @@ export default {
     // 修改按钮点击方法
     handleUpdate(row) {
       // this.openEditPage(row.postsId)
-      this.$router.push(`/content/article-editing?aid=${row.postsId}`)
+      // this.$router.push(`/content/article-editing?aid=${row.postsId}`)
+      this.$router.push(`/content/article-modify?aid=${row.postsId}`)
     },
     // 行删除按钮处理
     handleDelete(row, index) {
@@ -385,5 +389,11 @@ export default {
   height: calc(100% - 32px - 41px);
   box-sizing: border-box;
   padding-top: 8px;
+}
+
+.icon-ontop{
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
 }
 </style>

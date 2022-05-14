@@ -16,6 +16,11 @@
             <el-button v-if="editDataModel.postStatus === 'DRAFT'" @click="saveData('DRAFT')">
               保存草稿
             </el-button>
+            <div class="styleof-inlineblock">
+              <el-upload class="upload-demo" :action="importMdUrl" :headers="{Authorization: getToken()}" accept=".md" :show-file-list="false" :on-success="importMdSuccess" :before-upload="beforeImportMdSuccess">
+                <el-button type="primary">导入md文件</el-button>
+              </el-upload>
+            </div>
             <el-button type="primary" @click="pubButtonClick">
               发布
             </el-button>
@@ -58,7 +63,7 @@
 </template>
 <script>
 import { getToken } from '@/utils/auth'
-import { getArticleById, deleteArticle, createArticle, updateArticle, getTagList, mdEditorUploadImage, uploadUrl } from '@/api/articles'
+import { getArticleById, deleteArticle, createArticle, updateArticle, getTagList, mdEditorUploadImage, uploadUrl, importMdUrl } from '@/api/articles'
 import { emptyChecker } from '@/utils/validate'
 import { createUuid, handleFormValidError, getTextFormHtml } from '@/utils/common'
 import qs from 'qs'
@@ -80,6 +85,9 @@ export default {
     return {
       // 上传接口URL
       uploadUrl,
+
+      // 导入md文件接口url
+      importMdUrl,
 
       // 默认头像路径
       defaultUserImage: require('@/assets/default_user_image.jpg'),
@@ -194,9 +202,9 @@ export default {
 
     // 上传文章封面图之前验证的方法
     beforeArticleCoverUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
+      const isLt1M = file.size / 1024 / 1024 < 2
       if (!isLt1M) {
-        this.$message.error('封面图片大小不能超过1MB!')
+        this.$message.error('封面图片大小不能超过2MB!')
       }
       return isLt1M
     },
@@ -204,6 +212,31 @@ export default {
     handleArticleCoverSuccess(res, file) {
       this.articleCoverUrl = res.result
       console.log('this.articleCoverUrl=', this.articleCoverUrl)
+    },
+
+    // 上传文章封面图之前验证的方法
+    beforeImportMdSuccess(file) {
+      const isLt1M = file.size / 1024 / 1024 < 10
+      if (!isLt1M) {
+        this.$message.error('封面图片大小不能超过10MB!')
+      }
+      return isLt1M
+    },
+    // 上传文章封面图成功后回调函数
+    importMdSuccess(res, file) {
+      if (res && res.code === 0) {
+        if (res.result.postTitle.endsWith('.md')) {
+          res.result.postTitle = res.result.postTitle.substr(0, res.result.postTitle.length - 3)
+        }
+        this.editDataModel.postTitle = res.result.postTitle
+        this.editDataModel.postContent = res.result.content
+      } else {
+        if (res.message) {
+          this.this.$message.error(res.message)
+        } else {
+          this.$message.error('导入失败，请重试或联系管理员')
+        }
+      }
     },
 
     getToken,
@@ -230,9 +263,9 @@ export default {
               const nextChar = mdCurrentValue.substr(imgStrIndex + item.length, 1)
               const nextNextChar = imgStrIndex + item.length + 1 <= currentMaxLength ? mdCurrentValue.substr(imgStrIndex + item.length + 1, 1) : ''
               let repItem = (prevPrevChar == '\n' ? '' : '\n') +
-                          (prevChar == '\n' ? '' : '\n') + item +
-                          (nextChar == '\n' ? '' : '\n') +
-                          (nextNextChar == '\n' ? '' : '\n')
+                (prevChar == '\n' ? '' : '\n') + item +
+                (nextChar == '\n' ? '' : '\n') +
+                (nextNextChar == '\n' ? '' : '\n')
               if (repItem.length != item.length) {
                 this.editDataModel.postContent = mdCurrentValue.replace(item, repItem)
               }

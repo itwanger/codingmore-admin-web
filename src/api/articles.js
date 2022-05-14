@@ -92,3 +92,5 @@ export function cancelArticleOnTop(data) {
 }
 
 export const uploadUrl = process.env.VUE_APP_BASE_API + '/ossController/upload'
+
+export const importMdUrl = process.env.VUE_APP_BASE_API + '/posts/uploadMd'

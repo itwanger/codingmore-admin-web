@@ -280,7 +280,7 @@ export default {
     if (userMenus.length > 0) {
       this.pageRouters.forEach(lv1 => {
         let lv1Copy = deepCopy(lv1)
-        let lv2Arr = lv1.children.filter(item => userMenus.indexOf(item.name) > -1)
+        let lv2Arr = lv1.children.filter(item => userMenus.indexOf(item.name) > -1 && item.name !== 'article-modify')
         lv1Copy.children = lv2Arr
         if (lv1Copy.children.length > 0) {
           this.pageShowRouters.push(lv1Copy)

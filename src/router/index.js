@@ -81,6 +81,15 @@ export const pageRouters = [
         }
       },
       {
+        path: 'article-modify',
+        name: 'article-modify',
+        icon: 'el-icon-edit-outline',
+        component: articleEdit,
+        meta: {
+          title: '编辑文章'
+        }
+      },
+      {
         path: 'articles',
         name: 'article-management',
         icon: 'iconpark-list-two',

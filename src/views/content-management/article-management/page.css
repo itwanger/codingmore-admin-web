@@ -1,0 +1,38 @@
+.left-part {
+  width: 35%;
+  padding-right: 10px;
+}
+.right-part {
+  width: 65%;
+  padding-left: 10px;
+}
+.tree-area {
+  margin-top: 10px;
+  height: 400px;
+  overflow: auto;
+}
+
+.table-container {
+  height: calc(100% - 32px - 41px);
+  box-sizing: border-box;
+  padding-top: 8px;
+}
+
+.icon-ontop {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.el-table__body .article-cover-col{
+  padding: 5px;
+}
+
+.el-table__body .article-cover-col .cell {
+  padding: 0;
+}
+
+/* .el-table__body .article-cover-col img{
+  width: 69px;
+  height: 46px;
+} */

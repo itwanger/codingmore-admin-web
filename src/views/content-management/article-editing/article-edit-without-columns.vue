@@ -16,11 +16,6 @@
             <el-button v-if="editDataModel.postStatus === 'DRAFT'" @click="saveData('DRAFT')">
               保存草稿
             </el-button>
-            <div class="styleof-inlineblock">
-              <el-upload class="upload-demo" :action="importMdUrl" :headers="{Authorization: getToken()}" accept=".md" :show-file-list="false" :on-success="importMdSuccess" :before-upload="beforeImportMdSuccess">
-                <el-button type="primary">导入md文件</el-button>
-              </el-upload>
-            </div>
             <el-button type="primary" @click="pubButtonClick">
               发布
             </el-button>
@@ -28,7 +23,17 @@
         </div>
         <!-- 正文 :html="false"   -->
         <el-form-item prop="postContent">
-          <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" @change="handleEditorChange" @imgAdd="handleEditorImgAdd" :toolbars="toolbars" />
+          <mavon-editor v-model="editDataModel.postContent" ref="md" :style="'height:'+ mdEditorHeight + ';box-shadow:none;border:1px solid #efefef;'" @change="handleEditorChange" @imgAdd="handleEditorImgAdd" :toolbars="toolbars" >
+            <template v-slot:left-toolbar-before>
+              <div class="styleof-inlineblock">
+                <el-upload class="upload-demo" :action="importMdUrl" :headers="{Authorization: getToken()}" accept=".md" :show-file-list="false" :on-success="importMdSuccess" :before-upload="beforeImportMdSuccess">
+                  <button type="button" title="导入md文件" class="op-icon fa">
+                    <more-icon style="width: 18px; top: 0;" iconClass="iconfont-import"></more-icon>
+                  </button>
+                </el-upload>
+              </div>
+            </template>
+          </mavon-editor>
         </el-form-item>
       </el-form>
     </el-col>
@@ -68,6 +73,7 @@ import { emptyChecker } from '@/utils/validate'
 import { createUuid, handleFormValidError, getTextFormHtml } from '@/utils/common'
 import qs from 'qs'
 import { mavonEditor } from 'mavon-editor'
+import MoreIcon from '@/components/more-icon'
 import 'mavon-editor/dist/css/index.css'
 import './page.css'
 import Vue from 'vue'
@@ -75,7 +81,7 @@ Vue.use(mavonEditor)
 
 export default {
   name: 'articleEdit',
-  components: { mavonEditor },
+  components: { mavonEditor, MoreIcon },
   computed: {
     currentUserInfo() {
       return this.$store.state.userInfo
@@ -88,9 +94,6 @@ export default {
 
       // 导入md文件接口url
       importMdUrl,
-
-      // 默认头像路径
-      defaultUserImage: require('@/assets/default_user_image.jpg'),
 
       // 页面顶部显示当前操作类型的标题部分
       topOperTitlePart: '新增',

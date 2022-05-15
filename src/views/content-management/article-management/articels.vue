@@ -25,26 +25,26 @@
       <el-table ref="multipleTable" height="calc(100% - 10px)" :key="tableAbout.tableKey" :data="tableAbout.tableData" border fit highlight-current-row class="normal-table" @selection-change="handleSelectionChange">
         <!-- <el-table-column align="center" class-name="recorrect-center" type="selection" width="55px" /> -->
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
-        <el-table-column label="封面图" width="80px" align="center">
+        <el-table-column label="封面图" width="80px" align="center" class-name="article-cover-col">
           <template slot-scope="{row}">
             <el-popover v-if="row.attribute && row.attribute.articleCoverUrl" placement="right" trigger="click">
               <el-image style="width: 360px; height: 240px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
-              <el-button type="text" slot="reference">查看</el-button>
+              <el-image slot="reference" style="width: 69px; height: 46px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
             </el-popover>
-            <span v-else>无</span>
+            <el-image v-else :src="defaultArticleCoverSrc" fit="fill"></el-image>
           </template>
         </el-table-column>
         <el-table-column label="标题" prop="postTitle">
           <template slot-scope="{row}">
             <img :src="onTopImageSrc" class="icon-ontop" v-if="row.menuOrder !== 0" />
-            <el-link @click="handleUpdate(row)">{{row.postTitle}}</el-link>
+            <el-link type="primary" @click="handleUpdate(row)">{{row.postTitle}}</el-link>
           </template>
         </el-table-column>
         <!-- <el-table-column label="摘要" prop="postExcerpt" width="200px" show-overflow-tooltip /> -->
         <el-table-column label="作者" prop="userNiceName" width="100px" align="center" />
-        <el-table-column label="发布时间" prop="postDate" width="155px" align="center">
+        <el-table-column label="操作/发布时间" prop="postDate" width="155px" align="center">
           <template slot-scope="{row}">
-            {{row.postDate ? row.postDate.substr(0,16) : ''}}
+            {{row.postDate ? row.postDate.substr(0,16) : row.postModified.substr(0,16) }}
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="postStatus" width="80px" :formatter="statusFilter" align="center">
@@ -54,12 +54,17 @@
             </el-tag>
           </template>
         </el-table-column>
-        <!-- <el-table-column label="排序号" prop="menuOrder" width="80px" align="center" /> -->
-        <el-table-column label="操作" align="center" width="260px">
+        <el-table-column label="置顶" prop="menuOrder" width="80px" align="center">
+          <template slot-scope="{row}">
+            <el-switch v-model="row.menuOrder" :active-value="1" :inactive-value="0" @change="handleSettingOnTop($event, row)">
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="180px">
           <template slot-scope="{row,$index}">
-            <el-button type="primary" size="mini" @click="handleSettingOnTop(row)">
+            <!-- <el-button type="primary" size="mini" @click="handleSettingOnTop(row)">
               {{ row.menuOrder === 0 ? '置顶' : '取消置顶'}}
-            </el-button>
+            </el-button> -->
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
@@ -97,11 +102,15 @@ import { getArticlePagedList, deleteArticle, bindArticleToColumns, setArticleOnT
 import { loopExpendTree } from '@/utils/common'
 import { getAllColumns } from '@/api/columns'
 import qs from 'qs'
+import './page.css'
 
 export default {
   name: 'ArticlesManagement',
   data() {
     return {
+      // 默认文章图片路径
+      defaultArticleCoverSrc: require('@/assets/default-article-cover.png'),
+
       statusList: [{ value: 'DRAFT', label: '草稿' }, { value: 'PUBLISHED', label: '发布' }], // { value: 'DELETED', label: '删除' },
 
       // 文章列表相关属性
@@ -345,8 +354,8 @@ export default {
     },
 
     // 置顶/取消置顶方法
-    handleSettingOnTop(row) {
-      const reqFunc = row.menuOrder === 1 ? cancelArticleOnTop : setArticleOnTop
+    handleSettingOnTop(status, row) {
+      const reqFunc = status === 0 ? cancelArticleOnTop : setArticleOnTop
       let reqData = qs.stringify({ postsId: row.postsId })
       reqFunc(reqData).then(() => {
         this.$notify({
@@ -370,30 +379,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.left-part {
-  width: 35%;
-  padding-right: 10px;
-}
-.right-part {
-  width: 65%;
-  padding-left: 10px;
-}
-.tree-area {
-  margin-top: 10px;
-  height: 400px;
-  overflow: auto;
-}
-
-.table-container {
-  height: calc(100% - 32px - 41px);
-  box-sizing: border-box;
-  padding-top: 8px;
-}
-
-.icon-ontop{
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-}
-</style>

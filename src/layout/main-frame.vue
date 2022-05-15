@@ -77,7 +77,7 @@
 import { pageRouters } from '../router'
 import { userLogout, modifyPassword } from '../api/users'
 import { removeToken } from '../utils/auth'
-import MoreIcon from '../components/more-icon'
+import MoreIcon from '@/components/more-icon'
 import { emptyChecker } from '@/utils/validate'
 import passwordMeter from 'vue-simple-password-meter'
 import { deepCopy } from '../utils/common'

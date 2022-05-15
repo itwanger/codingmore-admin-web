@@ -8,7 +8,7 @@
       <config v-if="iconClass === 'iconpark-config'" theme="outline" size="18" />
     </template>
     <!-- 当图标开头是iconpark-的时候，是阿里矢量图标库的图标 -->
-    <span v-else-if="iconClass.startsWith('iconfont-')" v-html="getSvg(iconClass)"></span>
+    <span v-else-if="iconClass.startsWith('iconfont-')" v-html="getSvg(iconClass, iconWidth, iconHeight, iconColor)"></span>
   </i>
 </template>
 <script>
@@ -26,6 +26,18 @@ export default {
     iconClass: {
       type: String,
       default: ''
+    },
+    iconWidth: {
+      type: Number,
+      default: 18
+    },
+    iconHeight: {
+      type: Number,
+      default: 18
+    },
+    iconColor: {
+      type: String,
+      default: 'currentColor'
     }
   },
   methods: {

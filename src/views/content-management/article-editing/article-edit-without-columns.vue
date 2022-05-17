@@ -52,10 +52,15 @@
           <el-input v-model="editDataModel.postExcerpt" :rows="3" :autosize="{ minRows: 3, maxRows: 3}" type="textarea" placeholder="请输入摘要" maxlength="100" show-word-limit />
         </el-form-item>
         <el-form-item label="封面图">
-          <el-upload class="article-cover" :action="uploadUrl" :headers="{Authorization: getToken()}" :show-file-list="false" :on-success="handleArticleCoverSuccess" :before-upload="beforeArticleCoverUpload">
-            <el-image v-if="articleCoverUrl" :src="articleCoverUrl" fit="cover" class="article-cover"></el-image>
-            <i v-else class="el-icon-plus cover-uploader-icon"></i>
-          </el-upload>
+          <div class="styleof-inlineblock" @mouseover="articleCoverOpLayerShow = true" @mouseleave="articleCoverOpLayerShow = false">
+            <el-upload class="article-cover" :action="uploadUrl" :headers="{Authorization: getToken()}" :show-file-list="false" :on-success="handleArticleCoverSuccess" :before-upload="beforeArticleCoverUpload">
+              <el-image v-if="articleCoverUrl" :src="articleCoverUrl" fit="cover" class="article-cover"></el-image>
+              <i v-else class="el-icon-plus cover-uploader-icon"></i>
+              <div v-show="articleCoverUrl && articleCoverOpLayerShow" class="op-layer">
+                <el-button type="danger" size="mini" @click.stop="articleCoverUrl=''"><i class="el-icon-refresh"></i>删除</el-button>
+              </div>
+            </el-upload>
+          </div>
           <div class="red-tip">只能上传jpg/png文件，最佳宽高比为3:2，展示端文章详情页最大宽度820px, 且不超过2M</div>
         </el-form-item>
       </el-form>
@@ -124,6 +129,7 @@ export default {
       },
 
       articleCoverUrl: '',
+      articleCoverOpLayerShow: false,
 
       // 文章标题相关设置数据
       otherSettings: {

@@ -27,7 +27,7 @@
         <el-table-column label="编号" prop="postsId" width="80px" align="center" />
         <el-table-column label="封面图" width="80px" align="center" class-name="article-cover-col">
           <template slot-scope="{row}">
-            <el-popover v-if="row.attribute && row.attribute.articleCoverUrl" placement="right" trigger="click">
+            <el-popover v-if="row.attribute && row.attribute.articleCoverUrl" placement="right" trigger="hover">
               <el-image style="width: 360px; height: 240px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
               <el-image slot="reference" style="width: 69px; height: 46px" :src="row.attribute.articleCoverUrl" fit="cover"></el-image>
             </el-popover>

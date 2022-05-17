@@ -2,8 +2,12 @@
   <div class="app-container">
     <div class="flex-row-ver-center">
       <div class="flex-auto-item">
+        <el-input v-model="tableAbout.listQuery.tagName" placeholder="请输入标签名称"></el-input>
       </div>
       <div class="flex-fixed-item">
+        <el-button class="filter-item" style="margin-left:14px;" type="primary" icon="el-icon-search" @click="search">
+          搜索
+        </el-button>
         <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
           新增
         </el-button>
@@ -58,7 +62,8 @@ export default {
         listQuery: {
           page: 1,
           pageSize: 15,
-          total: 0
+          total: 0,
+          tagName: ''
         },
         tableKey: 0,
         tableData: []

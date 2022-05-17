@@ -165,7 +165,7 @@ export default {
     // 获取文章列表
     this.getList()
     // 获取专栏树数据
-    this.getTreeData()
+    // this.getTreeData()
 
     let _this = this
     window.refleshTable = (requestColumnId) => {

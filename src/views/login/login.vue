@@ -90,7 +90,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(~@/assets/login-bg.jpeg) no-repeat center center;
+  /* background: url(./../../img/login-bg.jpeg) no-repeat center center; */
+  background: url(https://cdn.tobebetterjavaer.com/codingmore-admin-web/login-bg.jpeg) no-repeat center center;
   background-size: 100% 100%;
 }
 .color-blue {

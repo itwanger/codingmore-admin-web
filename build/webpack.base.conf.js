@@ -20,6 +20,9 @@ const createLintingRule = () => ({
 })
 
 module.exports = {
+  // externals: {
+  //   'icon-park/vue': 'icon-park/vue'
+  // },
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'

@@ -10,6 +10,18 @@
       <el-form-item label="站点介绍">
         <el-input v-model="siteInfo.siteDesc" placeholder="请填写站点介绍，不超过1000字" maxlength="1000" :rows="3" type="textarea"></el-input>
       </el-form-item>
+      <el-form-item label="知识星球推广链接">
+        <el-input v-model="siteInfo.extendInfo.zsxqHref" placeholder="知识星球推广链接" maxlength="300" :rows="2" type="textarea"></el-input>
+      </el-form-item>
+      <el-form-item label="知识星球推广简介">
+        <el-input v-model="siteInfo.extendInfo.zsxqDesc" placeholder="知识星球推广简介" maxlength="500" :rows="3" type="textarea"></el-input>
+      </el-form-item>
+      <el-form-item label="站长链接">
+        <el-input v-model="siteInfo.extendInfo.headStationHref" placeholder="站长链接" maxlength="300" :rows="2" type="textarea"></el-input>
+      </el-form-item>
+      <el-form-item label="站长简介">
+        <el-input v-model="siteInfo.extendInfo.headStationDesc" placeholder="站长简介" maxlength="500" :rows="3" type="textarea"></el-input>
+      </el-form-item>
       <el-form-item label="ICP备案信息">
         <el-input v-model="siteInfo.extendInfo.icpInfo" placeholder="请填写ICP备案信息" maxlength="100"></el-input>
       </el-form-item>
@@ -50,6 +62,10 @@ export default {
         attribute: '', // 其他属性
         // 其他属性对象
         extendInfo: {
+          zsxqHref: '', // 知识星球推广链接
+          zsxqDesc: '', // 知识星球简介
+          headStationHref: '', // 站长链接
+          headStationDesc: '', // 站长简介
           icpInfo: '', // icp备案信息
           psInfo: '', // 公安网备案信息
           copyrightInfo: '', // 版权所有信息

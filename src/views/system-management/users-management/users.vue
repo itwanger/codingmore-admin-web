@@ -30,7 +30,7 @@
         <el-table-column label="添加时间" prop="userRegistered" align="center" />
         <el-table-column label="状态" prop="userStatus" align="center">
           <template slot-scope="{ row }">
-            <el-switch v-model="row.userStatus" :active-value="0" :inactive-value="1" @change="handleStatusChange($event, row.id)">
+            <el-switch v-model="row.userStatus" :active-value="0" :inactive-value="1" @change="handleStatusChange($event, row.usersId)">
             </el-switch>
           </template>
         </el-table-column>
